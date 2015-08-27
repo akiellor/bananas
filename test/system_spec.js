@@ -38,6 +38,7 @@ describe('system', function() {
     }
   ];
 
-  scenarioBuilder(transitions, verifications).build(global, function() { return []; });
+  var builder = scenarioBuilder(transitions, verifications);
+  builder.build(global, function() { return []; }).then(console.log);
 });
 
