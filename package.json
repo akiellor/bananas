@@ -8,5 +8,8 @@
   "devDependencies": {
     "chai": "^3.2.0",
     "mocha": "^2.2.5"
+  },
+  "dependencies": {
+    "chai-spies": "^0.7.0"
   }
 }
