@@ -17,7 +17,7 @@ describe('system', function() {
 
   it("Should Traverse A simple non-cyclical graph", function() {
 
-    var nodeVisitor = chai.spy(console.log);
+    var nodeVisitor = chai.spy();
 
     function createNode(i) {
       return {name: String(i)};
@@ -30,14 +30,14 @@ describe('system', function() {
     nodes[4].children = [nodes[1],nodes[2]];
 
     graphTraversal(nodes, nodeVisitor);
-    expect(nodeVisitor).to.have.been.called(5);
-    //Check for bfs traversal
-    console.log(expect(nodeVisitor.__spy.calls[0][0].name).to.equal(nodes[0].name));
-    console.log(expect(nodeVisitor.__spy.calls[1][0].name).to.equal(nodes[1].name));
-    console.log(expect(nodeVisitor.__spy.calls[2][0].name).to.equal(nodes[3].name));
-    console.log(expect(nodeVisitor.__spy.calls[3][0].name).to.equal(nodes[4].name));
-    console.log(expect(nodeVisitor.__spy.calls[4][0].name).to.equal(nodes[2].name));
 
+    expect(nodeVisitor).to.have.been.called(5);
+    //Check for bfs traversalexpect(nodeVisitor.__spy.calls[0][0].name).to.equal(nodes[0].name));
+    expect(nodeVisitor.__spy.calls[0][0].name).to.equal(nodes[0].name);
+    expect(nodeVisitor.__spy.calls[1][0].name).to.equal(nodes[1].name);
+    expect(nodeVisitor.__spy.calls[2][0].name).to.equal(nodes[3].name);
+    expect(nodeVisitor.__spy.calls[3][0].name).to.equal(nodes[4].name);
+    expect(nodeVisitor.__spy.calls[4][0].name).to.equal(nodes[2].name);
   });
 
 
