@@ -1,4 +1,5 @@
 var expect = require('chai').expect;
+var buildTestPlans = require(__dirname + '/../lib/build_test_plans');
 
 describe('build test plans', function() {
   it("should build no plans", function() {
