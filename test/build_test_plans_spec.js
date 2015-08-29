@@ -13,7 +13,7 @@ describe('build test plans', function() {
       return {name: String(i)};
     }
     var i = 0;
-    var nodes = Array(7).join().split('').map(function(){return createNode(i++);});
+    var nodes = Array(6).join().split('').map(function(){return createNode(i++);});
     nodes[0].children = [nodes[1], nodes[3]];
     nodes[1].children = [nodes[3]];
     nodes[3].children = [nodes[4]];
@@ -24,6 +24,20 @@ describe('build test plans', function() {
     expect(testPlans[0]).to.deep.equal([
       nodes[0],
       nodes[1],
+      nodes[3],
+      nodes[4],
+      nodes[2]
+    ]);
+
+    expect(testPlans[1]).to.deep.equal([
+      nodes[0],
+      nodes[3],
+      nodes[4],
+      nodes[1]
+    ]);
+
+    expect(testPlans[2]).to.deep.equal([
+      nodes[0],
       nodes[3],
       nodes[4],
       nodes[2]
