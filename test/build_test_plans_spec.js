@@ -43,5 +43,22 @@ describe('build test plans', function() {
       nodes[2]
     ]);
   });
+
+  it("should build for graph that cycles to root", function() {
+    function createNode(i) {
+      return {name: String(i)};
+    }
+    var i = 0;
+    var nodes = Array(4).join().split('').map(function(){return createNode(i++);});
+    nodes[0].children = [nodes[1]];
+    nodes[1].children = [nodes[0]];
+
+    var testPlans = buildTestPlans(nodes);
+
+    expect(testPlans[0]).to.deep.equal([
+      nodes[0],
+      nodes[1]
+    ]);
+  });
 });
 

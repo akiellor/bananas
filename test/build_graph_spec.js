@@ -6,7 +6,7 @@ describe('build graph', function() {
     var transitions = [
       {
         name: 'push empty',
-        requires: {},
+        requires: {full: undefined},
         provides: {full: true},
         apply: function(system) {
           system.push(1);
