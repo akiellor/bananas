@@ -15,4 +15,8 @@ var transitions = require('./transitions');
 var verifications = require('./verifications'); 
 
 var builder = scenarioBuilder(transitions, verifications);
-builder.build(global, sut);
+builder.build(function(testPlan) {
+  it(testPlan.name, function() {
+    testPlan.apply(sut());
+  });
+});
