@@ -1,9 +1,10 @@
+var Immutable = require('immutable');
 var buildGraph = require(__dirname + '/../lib/build_graph');
 var expect = require('chai').expect;
 
 describe('build graph', function() {
   it('should', function() {
-    var transitions = [
+    var transitions = Immutable.fromJS([
       {
         name: 'push empty',
         requires: function(model) {
@@ -22,19 +23,18 @@ describe('build graph', function() {
           system.pop();
         }
       }
-    ];
+    ]);
 
     var graph = buildGraph(transitions);
-    console.log(graph);
 
-    expect(graph.length).to.equal(1);
-    expect(graph[0].name).to.equal('push empty');
-    expect(graph[0].children.length).to.equal(1);
-    expect(graph[0].children[0].name).to.equal('pop');
+    expect(graph.size).to.equal(1);
+    expect(graph.get(0).get('name')).to.equal('push empty');
+    expect(graph.get(0).get('children').size).to.equal(1);
+    expect(graph.get(0).get('children').get(0).get('name')).to.equal('pop');
   });
 
   it('should build a graph defined with predicates', function() {
-    var transitions = [
+    var transitions = Immutable.fromJS([
       {
         name: 'push empty',
         requires: function(model) {
@@ -55,13 +55,13 @@ describe('build graph', function() {
           system.pop();
         }
       }
-    ];
+    ]);
 
     var graph = buildGraph(transitions);
 
-    expect(graph.length).to.equal(1);
-    expect(graph[0].name).to.equal('push empty');
-    expect(graph[0].children.length).to.equal(1);
-    expect(graph[0].children[0].name).to.equal('pop');
+    expect(graph.size).to.equal(1);
+    expect(graph.get(0).get('name')).to.equal('push empty');
+    expect(graph.get(0).get('children').size).to.equal(1);
+    expect(graph.get(0).get('children').get(0).get('name')).to.equal('pop');
   });
 });
