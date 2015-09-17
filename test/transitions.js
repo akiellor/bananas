@@ -1,7 +1,13 @@
+function noProp(name) {
+  return function(model) {
+    return !model.hasOwnProperty(name);
+  };
+}
+
 module.exports = [
   {
     name: 'flip 0 from initial',
-    requires: {first: undefined},
+    requires: noProp('first'),
     provides: {first: 1},
     apply: function(system) {
       system.flip(0);
@@ -25,7 +31,7 @@ module.exports = [
   },
   {
     name: 'flip 1 from initial',
-    requires: {second: undefined},
+    requires: noProp('second'),
     provides: {second: 1},
     apply: function(system) {
       system.flip(1);
@@ -49,7 +55,7 @@ module.exports = [
   },
   {
     name: 'flip 2 from initial',
-    requires: {third: undefined},
+    requires: noProp('third'),
     provides: {third: 1},
     apply: function(system) {
       system.flip(2);

@@ -6,7 +6,9 @@ describe('build graph', function() {
     var transitions = [
       {
         name: 'push empty',
-        requires: {full: undefined},
+        requires: function(model) {
+          return !model.hasOwnProperty('full');
+        },
         provides: {full: true},
         apply: function(system) {
           system.push(1);
@@ -23,6 +25,7 @@ describe('build graph', function() {
     ];
 
     var graph = buildGraph(transitions);
+    console.log(graph);
 
     expect(graph.length).to.equal(1);
     expect(graph[0].name).to.equal('push empty');
@@ -34,7 +37,9 @@ describe('build graph', function() {
     var transitions = [
       {
         name: 'push empty',
-        requires: {full: undefined},
+        requires: function(model) {
+          return !model.hasOwnProperty('full');
+        },
         provides: {full: true},
         apply: function(system) {
           system.push(1);

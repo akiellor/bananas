@@ -12,6 +12,7 @@
     "mocha": "^2.2.5"
   },
   "dependencies": {
-    "graphviz": "0.0.8"
+    "graphviz": "0.0.8",
+    "immutable": "^3.7.5"
   }
 }
