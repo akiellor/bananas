@@ -1,3 +1,4 @@
+var Immutable = require('immutable');
 var expect = require('chai').expect;
 var buildTestPlans = require(__dirname + '/../lib/build_test_plans');
 
@@ -7,72 +8,76 @@ describe('build test plans', function() {
       return {name: String(i)};
     }
     var i = 0;
-    return Array(size + 1).join().split('').map(function(){return createNode(i++);});
+    return Immutable.fromJS(Array(size + 1).join().split('').map(function(){return createNode(i++);}));
   }
 
   it("should build no plans", function() {
-    var testPlans = buildTestPlans([]);
+    var testPlans = buildTestPlans(
+      Immutable.fromJS([]),
+      Immutable.fromJS({}),
+      Immutable.List()
+    );
 
-    expect(testPlans).to.deep.equal([]);
+    expect(testPlans.size).to.equal(0);
   });
 
   it("should build for non-cyclical graph", function() {
     var nodes = createNodes(5)
-    nodes[0].children = [nodes[1], nodes[3]];
-    nodes[1].children = [nodes[3]];
-    nodes[3].children = [nodes[4]];
-    nodes[4].children = [nodes[1],nodes[2]];
+    var graph = Immutable.fromJS({
+      '0': ['1', '3'],
+      '1': ['3'],
+      '3': ['4'],
+      '4': ['1', '2']
+    });
+    var roots = Immutable.List(['0']);
 
-    var testPlans = buildTestPlans([nodes[0]]);
+    var testPlans = buildTestPlans(nodes, graph, roots);
 
-    expect(testPlans[0]).to.deep.equal([
-      nodes[0],
-      nodes[1],
-      nodes[3],
-      nodes[4],
-      nodes[2]
-    ]);
+    expect(testPlans.getIn([0, 0])).to.equal(nodes.get(0));
+    expect(testPlans.getIn([0, 1])).to.equal(nodes.get(1));
+    expect(testPlans.getIn([0, 2])).to.equal(nodes.get(3));
+    expect(testPlans.getIn([0, 3])).to.equal(nodes.get(4));
 
-    expect(testPlans[1]).to.deep.equal([
-      nodes[0],
-      nodes[3],
-      nodes[4],
-      nodes[1]
-    ]);
+    expect(testPlans.getIn([1, 0])).to.equal(nodes.get(0));
+    expect(testPlans.getIn([1, 1])).to.equal(nodes.get(1));
+    expect(testPlans.getIn([1, 2])).to.equal(nodes.get(3));
+    expect(testPlans.getIn([1, 3])).to.equal(nodes.get(4));
+    expect(testPlans.getIn([1, 4])).to.equal(nodes.get(2));
 
-    expect(testPlans[2]).to.deep.equal([
-      nodes[0],
-      nodes[3],
-      nodes[4],
-      nodes[2]
-    ]);
+    expect(testPlans.getIn([2, 0])).to.equal(nodes.get(0));
+    expect(testPlans.getIn([2, 1])).to.equal(nodes.get(3));
+    expect(testPlans.getIn([2, 2])).to.equal(nodes.get(4));
+    expect(testPlans.getIn([2, 3])).to.equal(nodes.get(1));
+
+    expect(testPlans.getIn([3, 0])).to.equal(nodes.get(0));
+    expect(testPlans.getIn([3, 1])).to.equal(nodes.get(3));
+    expect(testPlans.getIn([3, 2])).to.equal(nodes.get(4));
+    expect(testPlans.getIn([3, 3])).to.equal(nodes.get(2));
   });
 
   it("should build for graph that cycles to root", function() {
-    var nodes = createNodes(2);
-    nodes[0].children = [nodes[1]];
-    nodes[1].children = [nodes[0]];
+    var nodes = createNodes(2)
+    var graph = Immutable.fromJS({
+      '0': ['1'],
+      '1': ['0']
+    });
+    var roots = Immutable.List(['0']);
 
-    var testPlans = buildTestPlans([nodes[0]]);
+    var testPlans = buildTestPlans(nodes, graph, roots);
 
-    expect(testPlans[0]).to.deep.equal([
-      nodes[0],
-      nodes[1]
-    ]);
+    expect(testPlans.getIn([0, 0])).to.equal(nodes.get(0));
+    expect(testPlans.getIn([0, 1])).to.equal(nodes.get(1));
   });
 
   it("should build for graph with multiple roots", function() {
-    var nodes = createNodes(2);
+    var nodes = createNodes(2)
+    var graph = Immutable.fromJS({});
+    var roots = Immutable.List(['0', '1']);
 
-    var testPlans = buildTestPlans(nodes);
+    var testPlans = buildTestPlans(nodes, graph, roots);
 
-    expect(testPlans[0]).to.deep.equal([
-      nodes[0]
-    ]);
-
-    expect(testPlans[1]).to.deep.equal([
-      nodes[1]
-    ]);
+    expect(testPlans.getIn([0, 0])).to.equal(nodes.get(0));
+    expect(testPlans.getIn([1, 0])).to.equal(nodes.get(1));
   });
 });
 

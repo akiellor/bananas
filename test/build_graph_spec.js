@@ -1,6 +1,9 @@
 var Immutable = require('immutable');
 var buildGraph = require(__dirname + '/../lib/build_graph');
-var expect = require('chai').expect;
+var chai = require('chai');
+var expect = chai.expect
+var chaiImmutable = require('chai-immutable');
+chai.use(chaiImmutable);
 
 describe('build graph', function() {
   it('should', function() {
@@ -27,10 +30,10 @@ describe('build graph', function() {
 
     var graph = buildGraph(transitions);
 
-    expect(graph.size).to.equal(1);
-    expect(graph.get(0).get('name')).to.equal('push empty');
-    expect(graph.get(0).get('children').size).to.equal(1);
-    expect(graph.get(0).get('children').get(0).get('name')).to.equal('pop');
+    expect(graph).to.equal(Immutable.fromJS({
+      'push empty': ['pop'],
+      'pop': []
+    }));
   });
 
   it('should build a graph defined with predicates', function() {
@@ -59,9 +62,9 @@ describe('build graph', function() {
 
     var graph = buildGraph(transitions);
 
-    expect(graph.size).to.equal(1);
-    expect(graph.get(0).get('name')).to.equal('push empty');
-    expect(graph.get(0).get('children').size).to.equal(1);
-    expect(graph.get(0).get('children').get(0).get('name')).to.equal('pop');
+    expect(graph).to.equal(Immutable.fromJS({
+      'push empty': ['pop'],
+      'pop': []
+    }));
   });
 });
