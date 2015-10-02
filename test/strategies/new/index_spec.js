@@ -4,7 +4,7 @@ var chaiImmutable = require('chai-immutable');
 chai.use(chaiImmutable);
 var expect = chai.expect;
 
-var newStrategy = require(__dirname + '/../../lib/strategies/new');
+var newStrategy = require(__dirname + '/../../../lib/strategies/new');
 
 describe('new strategy', function() {
   it('should allow transitions where requirements satisfied by previous transition', function() {

@@ -2,7 +2,7 @@
   "name": "bananas",
   "version": "1.0.0",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha test/**/*_spec.js"
   },
   "license": "MIT",
   "devDependencies": {
