@@ -1,5 +1,5 @@
 var Immutable = require('immutable');
-var buildGraph = require(__dirname + '/../../../lib/build_graph');
+var buildGraph = require(__dirname + '/../../../lib/strategies/exhaustive_non_cyclic/build_graph');
 var chai = require('chai');
 var expect = chai.expect
 var chaiImmutable = require('chai-immutable');

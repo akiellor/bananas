@@ -1,6 +1,6 @@
 var Immutable = require('immutable');
 var expect = require('chai').expect;
-var buildScenarios = require(__dirname + '/../../../lib/build_scenarios');
+var buildScenarios = require(__dirname + '/../../../lib/strategies/exhaustive_non_cyclic/build_scenarios');
 
 describe('build test plans', function() {
   function createNodes(size) {
