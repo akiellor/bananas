@@ -48,27 +48,49 @@ describe('new strategy', function() {
 
     var testPlan = newStrategy(transitions, verifications);
 
-    expect(testPlan.size).to.equal(3);
+    expect(testPlan.size).to.equal(1);
 
     expect(testPlan.getIn([0, 'name'])).to.equal('0');
     expect(testPlan.getIn([0, 'steps', 0, 'name'])).to.equal('init');
     expect(testPlan.getIn([0, 'steps', 1, 'name'])).to.equal('fill half');
-    expect(testPlan.getIn([0, 'steps', 2, 'name'])).to.equal('pour');
-    expect(testPlan.getIn([0, 'steps', 3, 'name'])).to.equal('fill');
-    expect(testPlan.getIn([0, 'steps', 4, 'name'])).to.equal('volume is one');
+    expect(testPlan.getIn([0, 'steps', 2, 'name'])).to.equal('fill');
+    expect(testPlan.getIn([0, 'steps', 3, 'name'])).to.equal('volume is one');
+    expect(testPlan.getIn([0, 'steps', 4, 'name'])).to.equal('pour');
+  });
 
-    expect(testPlan.getIn([1, 'name'])).to.equal('1');
-    expect(testPlan.getIn([1, 'steps', 0, 'name'])).to.equal('init');
-    expect(testPlan.getIn([1, 'steps', 1, 'name'])).to.equal('fill half');
-    expect(testPlan.getIn([1, 'steps', 2, 'name'])).to.equal('fill');
-    expect(testPlan.getIn([1, 'steps', 3, 'name'])).to.equal('volume is one');
-    expect(testPlan.getIn([1, 'steps', 4, 'name'])).to.equal('pour');
+  it('should not provide multiple permutations of the same transitions', function() {
+    var transitions = Immutable.fromJS([
+      {
+        name: 'foo',
+        requires: function(model) {
+          return !model.hasOwnProperty('foo');
+        },
+        provides: {foo: true}
+      },
+      {
+        name: 'bar',
+        requires: function(model) {
+          return !model.hasOwnProperty('bar');
+        },
+        provides: {bar: true}
+      },
+      {
+        name: 'baz depends on foo and bar',
+        requires: function(model) {
+          return model.foo && model.bar;
+        },
+        provides: {baz: true}
+      }
+    ]);
 
-    expect(testPlan.getIn([2, 'name'])).to.equal('2');
-    expect(testPlan.getIn([2, 'steps', 0, 'name'])).to.equal('init');
-    expect(testPlan.getIn([2, 'steps', 1, 'name'])).to.equal('fill');
-    expect(testPlan.getIn([2, 'steps', 2, 'name'])).to.equal('volume is one');
-    expect(testPlan.getIn([2, 'steps', 3, 'name'])).to.equal('pour');
-    expect(testPlan.getIn([2, 'steps', 4, 'name'])).to.equal('fill half');
+    var verifications = Immutable.fromJS([]);
+
+    var testPlan = newStrategy(transitions, verifications);
+
+    expect(testPlan.size).to.equal(1);
+    expect(testPlan.getIn([0, 'name'])).to.equal('0');
+    expect(testPlan.getIn([0, 'steps', 0, 'name'])).to.equal('foo');
+    expect(testPlan.getIn([0, 'steps', 1, 'name'])).to.equal('bar');
+    expect(testPlan.getIn([0, 'steps', 2, 'name'])).to.equal('baz depends on foo and bar');
   });
 });
