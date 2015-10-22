@@ -20,3 +20,10 @@ builder.build(function(testPlan) {
     testPlan.apply(sut());
   });
 });
+
+builder = scenarioBuilder(transitions, verifications,"dag");
+builder.build(function(testPlan) {
+  it(testPlan.name, function() {
+    testPlan.apply(sut());
+  });
+});

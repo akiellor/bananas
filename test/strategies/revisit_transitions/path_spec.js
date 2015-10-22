@@ -4,7 +4,7 @@ var chaiImmutable = require('chai-immutable');
 chai.use(chaiImmutable);
 var expect = chai.expect;
 
-var createPath = require(__dirname + '/../../../lib/strategies/new/path');
+var createPath = require(__dirname + '/../../../lib/strategies/revisit_transitions/path');
 
 describe('path', function() {
   it('should merge subsequent compatible transitions into same segment', function() {
