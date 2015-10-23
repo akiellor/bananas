@@ -4,49 +4,13 @@ var chaiImmutable = require('chai-immutable');
 chai.use(chaiImmutable);
 var expect = chai.expect;
 
+var cupFixture = require(__dirname + '/../cup_fixture');
+var fooChainFixture = require(__dirname + '/../foo_chain_fixture');
 var newStrategy = require(__dirname + '/../../../lib/strategies/revisit_transitions/');
 
 describe('revisit_transitions strategy', function() {
   it('should allow transitions where requirements satisfied by previous transition', function() {
-    var transitions = Immutable.fromJS([
-      {
-        name: 'init',
-        requires: function(model) {
-          return !model.hasOwnProperty('volume');
-        },
-        provides: {volume: 0}
-      },
-      {
-        name: 'pour',
-        requires: function(model) {
-          return model.volume > 0;
-        },
-        provides: {volume: 0}
-      },
-      {
-        name: 'fill half',
-        requires: function(model) {
-          return model.volume === 0;
-        },
-        provides: {volume: 0.5}
-      },
-      {
-        name: 'fill',
-        requires: function(model) {
-          return model.volume < 1;
-        },
-        provides: {volume: 1}
-      }
-    ]);
-
-    var verifications = Immutable.fromJS([
-      {
-        name: 'volume is one',
-        requires: {volume: 1}
-      }
-    ]);
-
-    var testPlan = newStrategy(transitions, verifications);
+    var testPlan = newStrategy(cupFixture.transitions, cupFixture.verifications);
 
     expect(testPlan.size).to.equal(3);
 
@@ -73,33 +37,7 @@ describe('revisit_transitions strategy', function() {
   });
 
   it('should not provide multiple permutations of the same transitions', function() {
-    var transitions = Immutable.fromJS([
-      {
-        name: 'foo',
-        requires: function(model) {
-          return !model.hasOwnProperty('foo');
-        },
-        provides: {foo: true}
-      },
-      {
-        name: 'bar',
-        requires: function(model) {
-          return !model.hasOwnProperty('bar');
-        },
-        provides: {bar: true}
-      },
-      {
-        name: 'baz depends on foo and bar',
-        requires: function(model) {
-          return model.foo && model.bar;
-        },
-        provides: {baz: true}
-      }
-    ]);
-
-    var verifications = Immutable.fromJS([]);
-
-    var testPlan = newStrategy(transitions, verifications);
+    var testPlan = newStrategy(fooChainFixture.transitions, fooChainFixture.verifications);
 
     expect(testPlan.size).to.equal(1);
     expect(testPlan.getIn([0, 'name'])).to.equal('0');
