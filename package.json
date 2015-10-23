@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "graphviz": "0.0.8",
-    "immutable": "^3.7.5"
+    "immutable": "^3.7.5",
+    "sha.js": "^2.4.4"
   }
 }
