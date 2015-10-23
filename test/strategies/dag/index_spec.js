@@ -15,7 +15,7 @@ describe('create a directed acyclic graph from the states', function() {
 
     expect(testPlan.size).to.equal(1);
 
-    var steps = testPlan.get(0).get("steps");
+    var steps = testPlan.get(0);
 
     expect(steps.getIn([0, 'name'])).to.equal('init');
     expect(steps.getIn([1, 'name'])).to.equal('fill half');

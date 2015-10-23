@@ -11,7 +11,7 @@ describe('scenario builder', function() {
   it('should generate test hash identifiers based on the step names', function() {
     var builder = scenarioBuilder(cupFixture.transitions, cupFixture.verifications, function(transitions, verifications) {
       return Immutable.List([
-        Immutable.Map({steps: Immutable.List([transitions.get(0), transitions.get(2)])})
+        Immutable.List([transitions.get(0), transitions.get(2)])
       ]);
     });
 

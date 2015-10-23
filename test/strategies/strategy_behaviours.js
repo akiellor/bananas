@@ -15,10 +15,9 @@ module.exports = function strategyBehaviours(strategy) {
       var testPlan = strategy(fixture.transitions, fixture.verifications);
 
       testPlan.forEach(function(scenario) {
-        var steps = scenario.get('steps');
         var model = Immutable.Map({});
 
-        steps.forEach(function(transition) {
+        scenario.forEach(function(transition) {
           var found = findByRequirement(model, Immutable.List([transition]));
           expect(found.size).to.equal(1);
           model = model.merge(transition.get('provides'));
