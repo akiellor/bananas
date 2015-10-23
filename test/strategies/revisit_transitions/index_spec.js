@@ -7,8 +7,11 @@ var expect = chai.expect;
 var cupFixture = require(__dirname + '/../cup_fixture');
 var fooChainFixture = require(__dirname + '/../foo_chain_fixture');
 var newStrategy = require(__dirname + '/../../../lib/strategies/revisit_transitions/');
+var strategyBehaviours = require(__dirname + '/../strategy_behaviours');
 
 describe('revisit_transitions strategy', function() {
+  this.timeout(5000);
+
   it('should allow transitions where requirements satisfied by previous transition', function() {
     var testPlan = newStrategy(cupFixture.transitions, cupFixture.verifications);
 
@@ -45,4 +48,6 @@ describe('revisit_transitions strategy', function() {
     expect(testPlan.getIn([0, 'steps', 1, 'name'])).to.equal('bar');
     expect(testPlan.getIn([0, 'steps', 2, 'name'])).to.equal('baz depends on foo and bar');
   });
+
+  strategyBehaviours(newStrategy);
 });
