@@ -2,7 +2,8 @@
   "name": "bananas",
   "version": "1.0.0",
   "scripts": {
-    "test": "mocha test/**/*_spec.js"
+    "test": "mocha test/**/*_spec.js",
+    "build": "browserify -s bananas lib/scenario_builder.js -o bananas.js"
   },
   "license": "MIT",
   "devDependencies": {
