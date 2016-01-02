@@ -10,7 +10,8 @@
     "browserify": "^11.0.1",
     "chai": "^3.2.0",
     "chai-spies": "^0.7.0",
-    "mocha": "^2.2.5"
+    "mocha": "^2.2.5",
+    "webdriverio": "^3.4.0"
   },
   "dependencies": {
     "graphviz": "0.0.8",
