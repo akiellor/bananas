@@ -12,6 +12,7 @@
     "chai-immutable": "^1.5.3",
     "chai-spies": "^0.7.0",
     "mocha": "^2.2.5",
+    "selenium-webdriver": "^2.48.2",
     "webdriverio": "^3.4.0"
   },
   "dependencies": {
