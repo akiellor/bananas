@@ -16,11 +16,47 @@ function getTexts(driver, selector) {
 
 var transitions = [
   {
+    name: 'select all filter',
+    requires: function(model) {
+      return model.todosCount > 0 && model.filter !== 'all';
+    },
+    provides: {filter: 'all'},
+    apply: function(driver) {
+      driver
+        .findElement(By.linkText('All'))
+        .click();
+    }
+  },
+  {
+    name: 'select active filter',
+    requires: function(model) {
+      return model.todosCount > 0 && model.filter !== 'active';
+    },
+    provides: {filter: 'active'},
+    apply: function(driver) {
+      driver
+        .findElement(By.linkText('Active'))
+        .click();
+    }
+  },
+  {
+    name: 'select completed filter',
+    requires: function(model) {
+      return model.todosCount > 0 && model.filter !== 'completed';
+    },
+    provides: {filter: 'completed'},
+    apply: function(driver) {
+      driver
+        .findElement(By.linkText('Completed'))
+        .click();
+    }
+  },
+  {
     name: 'add todo 1',
     requires: function(model) {
       return !(model.todos && model.todos.first);
     },
-    provides: {todos: {first: {title: "first"}}},
+    provides: {todos: {first: {title: "first"}}, filter: 'all', todosCount: 1},
     apply: function(driver) {
       driver
         .wait(until.elementLocated(By.css("#new-todo")));
@@ -32,9 +68,9 @@ var transitions = [
   {
     name: 'complete todo 1',
     requires: function(model) {
-      return model.todos && model.todos.first;
+      return model.todos && model.todos.first && (model.filter === 'all' || model.filter === 'active');
     },
-    provides: {todos: {first: undefined}, completedTodos: {first: true}},
+    provides: {todos: {first: undefined}, completedTodos: {first: true}, todosCount: 0},
     apply: function(driver) {
       driver
         .findElement(By.css("#todo-list li .toggle")).click();
@@ -43,9 +79,9 @@ var transitions = [
   {
     name: 'delete todo 1',
     requires: function(model) {
-      return model.todos && model.todos.first;
+      return model.todos && model.todos.first && (model.filter === 'all' || model.filter === 'active');
     },
-    provides: {todos: {first: undefined}, deletedTodos: {first: true}},
+    provides: {todos: {first: undefined}, deletedTodos: {first: true}, todosCount: undefined},
     apply: function(driver) {
       driver
         .findElement(By.css("#todo-list li"))
@@ -62,7 +98,7 @@ var transitions = [
     requires: function(model) {
       return model.completedTodos && model.completedTodos.first;
     },
-    provides: {completedTodos: {first: undefined}, clearedTodos: {first: true}},
+    provides: {completedTodos: {first: undefined}, clearedTodos: {first: true}, todosCount: undefined},
     apply: function(driver) {
       driver
         .findElement(By.css("#clear-completed"))
@@ -75,7 +111,7 @@ var verifications = [
   {
     name: 'verify first',
     requires: function(model) {
-      return model.todos.first !== undefined;
+      return model.todos && model.todos.first !== undefined && (model.filter === 'all' || model.filter === 'active');
     },
     apply: function(driver, model) {
       getTexts(driver, "#todo-list li").then(function(texts) {
@@ -97,7 +133,7 @@ var verifications = [
   {
     name: 'verify first completed',
     requires: function(model) {
-      return model.completedTodos && model.completedTodos.first;
+      return model.completedTodos && model.completedTodos.first && (model.filter === 'all' || model.filter === 'completed');
     },
     apply: function(driver, model) {
       getTexts(driver, "#todo-list li.completed").then(function(texts) {
@@ -119,7 +155,7 @@ var verifications = [
   {
     name: 'verify todos remaining',
     requires: function(model) {
-      return model.todos && model.todos.first;
+      return model.todosCount === 1;
     },
     apply: function(driver, model) {
       driver.findElement(By.css('#todo-count')).getText().then(function(text) {
@@ -130,7 +166,7 @@ var verifications = [
   {
     name: 'verify todos remaining when completed',
     requires: function(model) {
-      return model.completedTodos && model.completedTodos.first;
+      return model.todosCount === 0;
     },
     apply: function(driver, model) {
       driver.findElement(By.css('#todo-count')).getText().then(function(text) {
