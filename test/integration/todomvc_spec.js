@@ -20,6 +20,17 @@ var transitions = [
     }
   },
   {
+    name: 'complete todo 1',
+    requires: function(model) {
+      return model.todos && model.todos.first;
+    },
+    provides: {todos: {first: undefined}, completedTodos: {first: true}},
+    apply: function(driver) {
+      driver
+        .findElement(By.css("#todo-list li .toggle")).click();
+    }
+  },
+  {
     name: 'delete todo 1',
     requires: function(model) {
       return model.todos && model.todos.first;
@@ -30,8 +41,10 @@ var transitions = [
         .findElement(By.css("#todo-list li"))
         .then(function(elem) {
           driver.actions().mouseMove(elem).perform();
-          elem.click();
         });
+      driver
+        .findElement(By.css("#todo-list li .destroy"))
+        .click();
     }
   }
 ];
@@ -57,16 +70,38 @@ var verifications = [
       return model.deletedTodos && model.deletedTodos.first !== undefined;
     },
     apply: function(driver, model) {
-      var textPromises = driver
+      var textsPromises = driver
         .findElements(By.css("#todo-list li"))
         .then(function(elems) {
-          return elems.map(function(elem) {
+          return webdriver.promise.all(elems.map(function(elem) {
             return elem.getText();
-          });
+          }));
         });
 
-      webdriver.promise.all(textPromises).then(function(texts) {
+      textsPromises.then(function(texts) {
         expect(texts).to.not.contain('first');
+      });
+    }
+  },
+  {
+    name: 'verify first completed',
+    requires: function(model) {
+      return model.completedTodos && model.completedTodos.first;
+    },
+    apply: function(driver, model) {
+      driver
+        .wait(until.elementLocated(By.css("#todo-list li.completed")));
+      var textsPromises = driver
+        .findElements(By.css("#todo-list li.completed"))
+        .then(function(elems) {
+          return webdriver.promise.all(elems.map(function(elem) {
+            return elem.getText();
+          }));
+        });
+
+
+      textsPromises.then(function(texts) {
+        expect(texts).to.contain('first');
       });
     }
   }
