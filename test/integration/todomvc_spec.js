@@ -4,6 +4,16 @@ var until = webdriver.until;
 var scenarioBuilder = require(__dirname + '/../../lib/scenario_builder');
 var expect = require('chai').expect;
 
+function getTexts(driver, selector) {
+  return driver
+  .findElements(By.css(selector))
+  .then(function(elems) {
+    return webdriver.promise.all(elems.map(function(elem) {
+      return elem.getText();
+    }));
+  });
+}
+
 var transitions = [
   {
     name: 'add todo 1',
@@ -46,6 +56,18 @@ var transitions = [
         .findElement(By.css("#todo-list li .destroy"))
         .click();
     }
+  },
+  {
+    name: 'clear completed',
+    requires: function(model) {
+      return model.completedTodos && model.completedTodos.first;
+    },
+    provides: {completedTodos: {first: undefined}, clearedTodos: {first: true}},
+    apply: function(driver) {
+      driver
+        .findElement(By.css("#clear-completed"))
+        .click();
+    }
   }
 ];
 
@@ -56,12 +78,9 @@ var verifications = [
       return model.todos.first !== undefined;
     },
     apply: function(driver, model) {
-      driver
-        .findElement(By.css("#todo-list li"))
-        .getText()
-        .then(function(text) {
-          expect(text).to.equal(model.todos.first.title);
-        });
+      getTexts(driver, "#todo-list li").then(function(texts) {
+        expect(texts).to.contain(model.todos.first.title);
+      });
     }
   },
   {
@@ -70,15 +89,7 @@ var verifications = [
       return model.deletedTodos && model.deletedTodos.first !== undefined;
     },
     apply: function(driver, model) {
-      var textsPromises = driver
-        .findElements(By.css("#todo-list li"))
-        .then(function(elems) {
-          return webdriver.promise.all(elems.map(function(elem) {
-            return elem.getText();
-          }));
-        });
-
-      textsPromises.then(function(texts) {
+      getTexts(driver, "#todo-list li").then(function(texts) {
         expect(texts).to.not.contain('first');
       });
     }
@@ -89,19 +100,19 @@ var verifications = [
       return model.completedTodos && model.completedTodos.first;
     },
     apply: function(driver, model) {
-      driver
-        .wait(until.elementLocated(By.css("#todo-list li.completed")));
-      var textsPromises = driver
-        .findElements(By.css("#todo-list li.completed"))
-        .then(function(elems) {
-          return webdriver.promise.all(elems.map(function(elem) {
-            return elem.getText();
-          }));
-        });
-
-
-      textsPromises.then(function(texts) {
+      getTexts(driver, "#todo-list li.completed").then(function(texts) {
         expect(texts).to.contain('first');
+      });
+    }
+  },
+  {
+    name: 'verify first cleared',
+    requires: function(model) {
+      return model.clearedTodos && model.clearedTodos.first;
+    },
+    apply: function(driver, model) {
+      getTexts(driver, "#todo-list li").then(function(texts) {
+        expect(texts).to.not.contain('first');
       });
     }
   }
