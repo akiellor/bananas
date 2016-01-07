@@ -115,6 +115,28 @@ var verifications = [
         expect(texts).to.not.contain('first');
       });
     }
+  },
+  {
+    name: 'verify todos remaining',
+    requires: function(model) {
+      return model.todos && model.todos.first;
+    },
+    apply: function(driver, model) {
+      driver.findElement(By.css('#todo-count')).getText().then(function(text) {
+        expect(text).to.equal('1 item left');
+      });
+    }
+  },
+  {
+    name: 'verify todos remaining when completed',
+    requires: function(model) {
+      return model.completedTodos && model.completedTodos.first;
+    },
+    apply: function(driver, model) {
+      driver.findElement(By.css('#todo-count')).getText().then(function(text) {
+        expect(text).to.equal('0 items left');
+      });
+    }
   }
 ];
 
