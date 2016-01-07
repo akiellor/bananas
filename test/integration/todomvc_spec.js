@@ -186,18 +186,34 @@ var options = {
 
 describe('todomvc', function() {
   this.timeout(100000);
+  var driver;
+
+  before(function() {
+    driver = new webdriver.Builder()
+      .forBrowser('chrome')
+      .build();
+  });
+
+  beforeEach(function() {
+    driver.get('http://todomvc.com/examples/angularjs/#/');
+  });
 
   var builder = scenarioBuilder(transitions, verifications);
   builder.build(function(testPlan) {
     it(testPlan.name, function(done) {
-      var driver = new webdriver.Builder()
-        .forBrowser('chrome')
-        .build();
-      driver.get('http://todomvc.com/examples/angularjs/#/');
-
       testPlan.apply(driver);
 
-      driver.quit().then(done);
+      driver.getTitle().then(function() {
+        done();
+      });
     });
+  });
+
+  afterEach(function() {
+    driver.executeScript('window.localStorage.clear();');
+  });
+
+  after(function(done) {
+    driver.quit().then(done);
   });
 });
