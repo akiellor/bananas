@@ -1,5 +1,4 @@
 var scenarioBuilder = require(__dirname + '/../lib/scenario_builder');
-var dagStrategy = require(__dirname + '/../lib/strategies/dag');
 var revisitTransitionsStrategy = require(__dirname + '/../lib/strategies/revisit_transitions');
 
 function sut() {
@@ -17,13 +16,6 @@ var transitions = require('./transitions');
 var verifications = require('./verifications'); 
 
 var builder = scenarioBuilder(transitions, verifications, revisitTransitionsStrategy);
-builder.build(function(testPlan) {
-  it(testPlan.name, function() {
-    testPlan.apply(sut());
-  });
-});
-
-builder = scenarioBuilder(transitions, verifications, dagStrategy);
 builder.build(function(testPlan) {
   it(testPlan.name, function() {
     testPlan.apply(sut());
