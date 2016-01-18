@@ -21,6 +21,19 @@ describe('path', function() {
     ]));
   });
 
+  it('should support transitions with fn provides', function() {
+    var t1 = Immutable.fromJS({requires: {}, provides: {foo: true}})
+    var t2 = Immutable.fromJS({requires: {}, provides: function(model) { model.bar = true; return model; }});
+    var path = createPath()
+      .add(t1)
+      .add(t2)
+      .toRaw();
+
+    expect(path).to.equal(Immutable.List([
+      Immutable.Set([t1, t2])
+    ]));
+  });
+
   it('should not merge grandchild compatible transitions', function() {
     var path = createPath()
       .add(Immutable.fromJS({requires: {}, provides: {foo: true}}))

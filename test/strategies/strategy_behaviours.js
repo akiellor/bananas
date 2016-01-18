@@ -5,9 +5,11 @@ chai.use(chaiImmutable);
 var expect = chai.expect;
 
 var findByRequirement = require(__dirname + '/../../lib/find_by');
+var updateModel = require(__dirname + '/../../lib/update_model');
 var cupFixture = require(__dirname + '/cup_fixture');
 var fooChainFixture = require(__dirname + '/foo_chain_fixture');
 var bitFlipFixture = require(__dirname + '/bit_flip_fixture');
+var toNames = require(__dirname + '/../to_names');
 
 module.exports = function strategyBehaviours(strategy) {
   [cupFixture, fooChainFixture, bitFlipFixture].forEach(function(fixture, i) {
@@ -20,7 +22,7 @@ module.exports = function strategyBehaviours(strategy) {
         scenario.forEach(function(transition) {
           var found = findByRequirement(model, Immutable.List([transition]));
           expect(found.size).to.equal(1);
-          model = model.merge(transition.get('provides'));
+          model = updateModel(model, transition);
         });
       });
     });
