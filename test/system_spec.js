@@ -1,5 +1,4 @@
-var scenarioBuilder = require(__dirname + '/../lib/scenario_builder');
-var revisitTransitionsStrategy = require(__dirname + '/../lib/strategies/revisit_transitions');
+var createTestPlan = require(__dirname + '/../lib/test_plan');
 
 function sut() {
   var state = [false, false, false];
@@ -15,9 +14,9 @@ function sut() {
 var transitions = require('./transitions');
 var verifications = require('./verifications'); 
 
-var builder = scenarioBuilder(transitions, verifications, revisitTransitionsStrategy);
-builder.build(function(testPlan) {
-  it(testPlan.name, function() {
-    testPlan.apply(sut());
+var testPlan = createTestPlan(transitions, verifications);
+testPlan.forEach(function(test) {
+  it(test.name, function() {
+    test.apply(sut());
   });
 });
