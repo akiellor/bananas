@@ -27,11 +27,11 @@ describe('revisit_transitions strategy', function() {
 
     expect(testPlanNames).to.equal(Immutable.fromJS([
       ['init', 'fill', 'volume is one', 'pour', 'fill half', 'add 0.5', 'volume is one'],
+      ['init', 'add 0.5', 'pour', 'fill', 'volume is one'],
       ['init', 'fill half', 'pour', 'add 0.5', 'fill', 'volume is one'],
       ['init', 'add 0.5', 'pour', 'fill half', 'fill', 'volume is one'],
       ['init', 'fill half', 'fill', 'volume is one', 'pour', 'add 0.5'],
       ['init', 'fill', 'volume is one', 'pour', 'add 0.5'],
-      ['init', 'add 0.5', 'pour', 'fill', 'volume is one'],
       ['init', 'add 0.5', 'fill', 'volume is one', 'pour', 'fill half'],
       ['init', 'fill half', 'pour', 'fill', 'volume is one'],
       ['init', 'fill half', 'add 0.5', 'volume is one', 'pour', 'fill', 'volume is one']
