@@ -78,7 +78,7 @@ module.exports = [
   {
     name: 'complete todo',
     requires: function(model) {
-      return model.todos && active(model.todos).length > 0 && (model.filter === 'all' || model.filter === 'active');
+      return model.todos && model.todos[0] && model.todos[0].state === "active" && (model.filter === 'all' || model.filter === 'active');
     },
     provides: function(model) {
       var todo = model.todos[0];
