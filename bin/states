@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+
+var requireLib = function(name) {
+  return require(__dirname + '/../lib/' + name);
+}
+
+var Immutable = require('immutable');
+var transitions = Immutable.fromJS(require(require('path').resolve(process.argv[2])));
+var findByRequirement = requireLib('find_by');
+var updateModel = requireLib('update_model');
+
+var queue = [];
+var states = Immutable.Map();
+var rootTransitions = findByRequirement(Immutable.Map(), transitions);
+rootTransitions.forEach(function(t) { queue.push(Immutable.Map({model: Immutable.Map(), transition: t})); }); 
+
+while (queue.length > 0) {
+  var node = queue.shift();
+  var model = node.get('model');
+  var transition = node.get('transition');
+
+  var newModel = updateModel(model, transition);
+  if (!states.has(newModel)) {
+    var moreTransitions = findByRequirement(newModel, transitions);
+    moreTransitions.forEach(function(t) { queue.push(Immutable.Map({model: newModel, transition: t })); });
+  }
+
+  states = states.update(newModel, Immutable.Map(), function(value) {
+    return value.set(model.toString(), transition.get('name'));
+  });
+}
+
+var graphviz = require('graphviz');
+var g = graphviz.digraph("G");
+
+function sanitize(string) {
+  return string.replace(/([:{} "\[\]])/g, '\\$1');
+}
+
+
+states.forEach(function(value, model) {
+  var n1 = g.addNode(sanitize(model.toString()));
+  value.forEach(function(edgeName, otherModel) {
+    var n2 = g.addNode(sanitize(otherModel));
+    g.addEdge(n2, n1)
+      .set('label', edgeName);
+  });
+});
+
+console.log(g.to_dot());
