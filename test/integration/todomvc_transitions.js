@@ -70,7 +70,7 @@ module.exports = [
       if (model.todos && model.todos[0] && model.todos[0].title === '1') {
         return false;
       }
-      return model.todos && model.todos.length < 2;
+      return model.todos && model.todos.length < 1;
     },
     provides: function(model) {
       model.todos.push({title: '' + model.todos.length, state: 'active'});
