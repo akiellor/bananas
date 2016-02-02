@@ -12,7 +12,7 @@ An experimental alternative to example based testing. It could be likened to a [
 
 ## Hypothesis
 
-Many of these problems stem from using example based testing tools (xUnit) via an interface that is inherently slow.
+The problems stated above stem from using example based testing tools (xUnit) via an interface that is inherently slow.
 
 ## What is it?
 
