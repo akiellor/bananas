@@ -1,6 +1,6 @@
 # Bananas (name pending) [EXPERIMENTAL]
 
-An experimental alternative to example based testing. It could be likened to a [generation-based fuzzer](https://en.wikipedia.org/wiki/Fuzz_testing#Techniques).
+An experimental alternative to example based testing.
 
 ## Motivation
 
