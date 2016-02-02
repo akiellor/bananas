@@ -23,7 +23,7 @@ Bananas is a testing tool, which instead of focusing on distinct 'scenarios' or 
 ***DONE-ISH***
 
 * The project has a basic implementation that can generate an exhaustive suite for a TodoMVC application. [TodoMVC Test Model](test/integration)
-* Can generate a state transition diagram e.g. [TodoMVC State Diagram](docs/todo-state-diagram.png)
+* From the same test model, generate a state transition diagram. [TodoMVC State Diagram](docs/todo-state-diagram.png)
 * Run a full suite using `npm test`
 
 ***UP NEXT***
