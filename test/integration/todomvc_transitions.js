@@ -53,16 +53,27 @@ module.exports = [
     }
   },
   {
-    name: 'add todos',
+    name: 'init todos',
     requires: function(model) {
       return !model.todos;
     },
     provides: function(model) {
       model.filter = 'all';
-      model.todos = [
-        {title: 'first', state: 'active'},
-        {title: 'second', state: 'active'}
-      ];
+      model.todos = [];
+      return model;
+    },
+    apply: function() {}
+  },
+  {
+    name: 'add todo',
+    requires: function(model) {
+      if (model.todos && model.todos[0] && model.todos[0].title === '1') {
+        return false;
+      }
+      return model.todos && model.todos.length < 2;
+    },
+    provides: function(model) {
+      model.todos.push({title: '' + model.todos.length, state: 'active'});
       return model;
     },
     apply: function(driver, model) {
