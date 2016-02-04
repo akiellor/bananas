@@ -23,10 +23,15 @@ var bitFlipFixture = {
   verifications: require(__dirname + '/../fixtures/bit_flip_verifications')
 }
 
+var todoMvcFixture = {
+  transitions: require(__dirname + '/../integration/todomvc_transitions'),
+  verifications: require(__dirname + '/../integration/todomvc_verifications')
+};
+
 module.exports = function strategyBehaviours(strategy) {
-  [cupFixture, fooChainFixture, bitFlipFixture].forEach(function(fixture, i) {
+  [cupFixture, fooChainFixture, bitFlipFixture, todoMvcFixture].forEach(function(fixture, i) {
     it('should always satisfy requirements of transitions ' + i, function() {
-      var testPlan = strategy(fixture.transitions, fixture.verifications);
+      var testPlan = strategy(Immutable.fromJS(fixture.transitions), Immutable.fromJS(fixture.verifications));
 
       testPlan.forEach(function(scenario) {
         var model = Immutable.Map({});

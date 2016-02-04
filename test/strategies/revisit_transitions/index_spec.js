@@ -29,25 +29,25 @@ describe('revisit_transitions strategy', function() {
   this.timeout(5000);
 
   it('should allow transitions where requirements satisfied by previous transition', function() {
-    var testPlan = revisit(cupFixture.transitions, cupFixture.verifications);
+    var testPlan = revisit(Immutable.fromJS(cupFixture.transitions), Immutable.fromJS(cupFixture.verifications));
 
     var testPlanNames = toNames(testPlan);
 
     expect(testPlanNames).to.equal(Immutable.fromJS([
-      ['init', 'fill', 'volume is one', 'pour', 'fill half', 'add 0.5', 'volume is one'],
-      ['init', 'add 0.5', 'pour', 'fill', 'volume is one'],
-      ['init', 'fill half', 'pour', 'add 0.5', 'fill', 'volume is one'],
-      ['init', 'add 0.5', 'pour', 'fill half', 'fill', 'volume is one'],
-      ['init', 'fill half', 'fill', 'volume is one', 'pour', 'add 0.5'],
-      ['init', 'fill', 'volume is one', 'pour', 'add 0.5'],
-      ['init', 'add 0.5', 'fill', 'volume is one', 'pour', 'fill half'],
-      ['init', 'fill half', 'pour', 'fill', 'volume is one'],
-      ['init', 'fill half', 'add 0.5', 'volume is one', 'pour', 'fill', 'volume is one']
+      ['init', 'fill', 'pour', 'fill half', 'add 0.5'],
+      ['init', 'add 0.5', 'pour', 'fill'],
+      ['init', 'fill half', 'pour', 'add 0.5', 'fill'],
+      ['init', 'add 0.5', 'pour', 'fill half', 'fill'],
+      ['init', 'fill half', 'fill', 'pour', 'add 0.5'],
+      ['init', 'fill', 'pour', 'add 0.5'],
+      ['init', 'add 0.5', 'fill', 'pour', 'fill half'],
+      ['init', 'fill half', 'pour', 'fill'],
+      ['init', 'fill half', 'add 0.5', 'pour', 'fill']
     ]));
   });
 
   it('should not provide multiple permutations of the same transitions', function() {
-    var testPlan = revisit(fooChainFixture.transitions, fooChainFixture.verifications);
+    var testPlan = revisit(Immutable.fromJS(fooChainFixture.transitions), Immutable.fromJS(fooChainFixture.verifications));
 
     expect(testPlan.size).to.equal(1);
     expect(testPlan.getIn([0, 0, 'name'])).to.equal('foo');
