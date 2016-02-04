@@ -16,7 +16,7 @@ module.exports = [
   {
     name: 'baz depends on foo and bar',
     requires: function(model) {
-      return model.foo && model.bar;
+      return model.foo && model.bar && !model.hasOwnProperty('baz');
     },
     provides: {baz: true}
   }
