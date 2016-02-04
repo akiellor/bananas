@@ -6,10 +6,22 @@ var expect = chai.expect;
 
 var findByRequirement = require(__dirname + '/../../lib/find_by');
 var updateModel = require(__dirname + '/../../lib/update_model');
-var cupFixture = require(__dirname + '/cup_fixture');
-var fooChainFixture = require(__dirname + '/foo_chain_fixture');
-var bitFlipFixture = require(__dirname + '/bit_flip_fixture');
 var toNames = require(__dirname + '/../to_names');
+
+var cupFixture = {
+  transitions: require(__dirname + '/../fixtures/cup_transitions'),
+  verifications: require(__dirname + '/../fixtures/cup_verifications')
+};
+
+var fooChainFixture = {
+  transitions: require(__dirname + '/../fixtures/foo_chain_transitions'),
+  verifications: require(__dirname + '/../fixtures/foo_chain_verifications')
+}
+
+var bitFlipFixture = {
+  transitions: require(__dirname + '/../fixtures/bit_flip_transitions'),
+  verifications: require(__dirname + '/../fixtures/bit_flip_verifications')
+}
 
 module.exports = function strategyBehaviours(strategy) {
   [cupFixture, fooChainFixture, bitFlipFixture].forEach(function(fixture, i) {

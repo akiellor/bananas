@@ -1,6 +1,4 @@
-var Immutable = require('immutable');
-
-var transitions = Immutable.fromJS([
+module.exports = [
   {
     name: 'init',
     requires: function(model) {
@@ -39,18 +37,5 @@ var transitions = Immutable.fromJS([
     },
     provides: {volume: 1}
   }
-]);
-
-var verifications = Immutable.fromJS([
-  {
-    name: 'volume is one',
-    requires: {volume: 1}
-  }
-]);
-
-module.exports = {
-  transitions: transitions,
-  verifications: verifications
-};
-
+];
 

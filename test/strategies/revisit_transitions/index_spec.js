@@ -4,8 +4,16 @@ var chaiImmutable = require('chai-immutable');
 chai.use(chaiImmutable);
 var expect = chai.expect;
 
-var cupFixture = require(__dirname + '/../cup_fixture');
-var fooChainFixture = require(__dirname + '/../foo_chain_fixture');
+var cupFixture = {
+  transitions: require(__dirname + '/../../fixtures/cup_transitions'),
+  verifications: require(__dirname + '/../../fixtures/cup_verifications')
+};
+
+var fooChainFixture = {
+  transitions: require(__dirname + '/../../fixtures/foo_chain_transitions'),
+  verifications: require(__dirname + '/../../fixtures/foo_chain_verifications')
+}
+
 var revisit = require(__dirname + '/../../../lib/strategies/revisit_transitions/');
 var strategyBehaviours = require(__dirname + '/../strategy_behaviours');
 

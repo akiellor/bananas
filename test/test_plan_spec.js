@@ -4,7 +4,11 @@ var chaiImmutable = require('chai-immutable');
 chai.use(chaiImmutable);
 var expect = chai.expect;
 
-var cupFixture = require(__dirname + '/strategies/cup_fixture');
+var cupFixture = {
+  transitions: require(__dirname + '/fixtures/cup_transitions'),
+  verifications: require(__dirname + '/fixtures/cup_verifications')
+};
+
 var createTestPlan = require(__dirname + '/../lib/test_plan');
 
 describe('test plan', function() {
