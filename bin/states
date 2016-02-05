@@ -17,9 +17,9 @@ function sanitize(string) {
 
 states(transitions).forEach(function(value, model) {
   var n1 = g.addNode(sanitize(model.toString()));
-  value.forEach(function(edgeName, otherModel) {
+  value.forEach(function(otherModel, edgeName) {
     var n2 = g.addNode(sanitize(otherModel.toString()));
-    g.addEdge(n2, n1)
+    g.addEdge(n1, n2)
       .set('label', edgeName);
   });
 });

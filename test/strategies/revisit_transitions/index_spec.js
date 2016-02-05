@@ -16,14 +16,7 @@ var fooChainFixture = {
 
 var revisit = require(__dirname + '/../../../lib/strategies/revisit_transitions/');
 var strategyBehaviours = require(__dirname + '/../strategy_behaviours');
-
-function toNames(testPlan) {
-  return testPlan.map(function(scenario) {
-    return scenario.map(function(transition) {
-      return transition.get('name');
-    });
-  });
-}
+var toNames = require(__dirname + '/../../to_names');
 
 describe('revisit_transitions strategy', function() {
   this.timeout(5000);
