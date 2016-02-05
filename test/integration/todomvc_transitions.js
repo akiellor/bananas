@@ -19,7 +19,7 @@ module.exports = [
   {
     name: 'select all filter',
     requires: function(model) {
-      return model.todos && model.todos.length > 0 && model.filter !== 'all';
+      return model.todos && active(model.todos).length > 0 && completed(model.todos).length > 0 && model.filter !== 'all';
     },
     provides: {filter: 'all'},
     apply: function(driver) {
@@ -31,7 +31,7 @@ module.exports = [
   {
     name: 'select active filter',
     requires: function(model) {
-      return model.todos && model.todos.length > 0 && model.filter !== 'active';
+      return model.todos && active(model.todos).length > 0 && completed(model.todos).length > 0 && model.filter !== 'active';
     },
     provides: {filter: 'active'},
     apply: function(driver) {
@@ -43,7 +43,7 @@ module.exports = [
   {
     name: 'select completed filter',
     requires: function(model) {
-      return model.todos && model.todos.length > 0 && model.filter !== 'completed';
+      return model.todos && active(model.todos).length > 0 && completed(model.todos).length > 0 && model.filter !== 'completed';
     },
     provides: {filter: 'completed'},
     apply: function(driver) {
@@ -70,7 +70,7 @@ module.exports = [
       if (model.todos && model.todos[0] && model.todos[0].title === '1') {
         return false;
       }
-      return model.todos && model.todos.length < 1;
+      return model.todos && model.todos.length < 2;
     },
     provides: function(model) {
       model.todos.push({title: '' + model.todos.length, state: 'active'});
@@ -122,7 +122,7 @@ module.exports = [
   {
     name: 'clear completed',
     requires: function(model) {
-      return model.todos && completed(model.todos).length > 0;
+      return model.todos && completed(model.todos).length > 0 && model.filter === 'all';
     },
     provides: function(model) {
       model.todos = active(model.todos);
