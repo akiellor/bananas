@@ -5,7 +5,7 @@ var requireLib = function(name) {
 }
 
 var Immutable = require('immutable');
-var transitions = Immutable.fromJS(require(require('path').resolve(process.argv[2])));
+var transitions = Immutable.fromJS(require(require('path').resolve(process.argv[2])).transitions);
 var states = requireLib('states');
 
 var graphviz = require('graphviz');
