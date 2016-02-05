@@ -15,10 +15,14 @@ function sanitize(string) {
   return string.replace(/([:{} "\[\]])/g, '\\$1');
 }
 
+function serialise(model) {
+  return sanitize(model.sortBy(function(value, key) { return key; }).toString());
+}
+
 states(transitions).forEach(function(value, model) {
-  var n1 = g.addNode(sanitize(model.toString()));
+  var n1 = g.addNode(serialise(model));
   value.forEach(function(otherModel, edgeName) {
-    var n2 = g.addNode(sanitize(otherModel.toString()));
+    var n2 = g.addNode(serialise(otherModel));
     g.addEdge(n1, n2)
       .set('label', edgeName);
   });
