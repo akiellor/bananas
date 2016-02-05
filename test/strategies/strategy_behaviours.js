@@ -14,10 +14,7 @@ var fooChainFixture = require(__dirname + '/../models/foo_chain');
 
 var bitFlipFixture = require(__dirname + '/../models/bit_flip');
 
-var todoMvcFixture = {
-  transitions: require(__dirname + '/../integration/todomvc_transitions'),
-  verifications: require(__dirname + '/../integration/todomvc_verifications')
-};
+var todoMvcFixture = require(__dirname + '/../models/todomvc');
 
 module.exports = function strategyBehaviours(strategy) {
   [cupFixture, fooChainFixture, bitFlipFixture, todoMvcFixture].forEach(function(fixture, i) {

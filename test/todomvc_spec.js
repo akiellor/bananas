@@ -1,7 +1,7 @@
 var webdriver = require('selenium-webdriver');
-var createTestPlan = require(__dirname + '/../../lib/test_plan');
-var transitions = require(__dirname + '/todomvc_transitions');
-var verifications = require(__dirname + '/todomvc_verifications');
+var createTestPlan = require(__dirname + '/../lib/test_plan');
+var transitions = require(__dirname + '/models/todomvc').transitions;
+var verifications = require(__dirname + '/models/todomvc').verifications;
 
 var options = {
   host: 'localhost',
