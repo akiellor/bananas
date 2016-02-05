@@ -1,4 +1,4 @@
-module.exports = [
+module.exports.transitions = [
   {
     name: 'foo',
     requires: function(model) {
@@ -22,3 +22,4 @@ module.exports = [
   }
 ];
 
+module.exports.verifications = [];

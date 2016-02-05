@@ -8,11 +8,7 @@ var allEdges = require(__dirname + '/../../../lib/strategies/all_edges/');
 var strategyBehaviours = require(__dirname + '/../strategy_behaviours');
 var toNames = require(__dirname + '/../../to_names');
 
-var cupFixture = {
-  transitions: require(__dirname + '/../../fixtures/cup_transitions'),
-  verifications: require(__dirname + '/../../fixtures/cup_verifications')
-};
-
+var cupFixture = require(__dirname + '/../../models/cup');
 
 describe('all edges strategy', function() {
   this.timeout(5000);

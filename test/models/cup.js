@@ -1,4 +1,4 @@
-module.exports = [
+module.exports.transitions = [
   {
     name: 'init',
     requires: function(model) {
@@ -36,6 +36,13 @@ module.exports = [
       return model.volume < 1;
     },
     provides: {volume: 1}
+  }
+];
+
+module.exports.verifications = [
+  {
+    name: 'volume is one',
+    requires: {volume: 1}
   }
 ];
 

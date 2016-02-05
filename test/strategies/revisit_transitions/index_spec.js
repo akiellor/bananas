@@ -4,15 +4,9 @@ var chaiImmutable = require('chai-immutable');
 chai.use(chaiImmutable);
 var expect = chai.expect;
 
-var cupFixture = {
-  transitions: require(__dirname + '/../../fixtures/cup_transitions'),
-  verifications: require(__dirname + '/../../fixtures/cup_verifications')
-};
+var cupFixture = require(__dirname + '/../../models/cup');
 
-var fooChainFixture = {
-  transitions: require(__dirname + '/../../fixtures/foo_chain_transitions'),
-  verifications: require(__dirname + '/../../fixtures/foo_chain_verifications')
-}
+var fooChainFixture = require(__dirname + '/../../models/foo_chain');
 
 var revisit = require(__dirname + '/../../../lib/strategies/revisit_transitions/');
 var strategyBehaviours = require(__dirname + '/../strategy_behaviours');

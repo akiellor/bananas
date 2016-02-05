@@ -11,8 +11,8 @@ function sut() {
   };
 }
 
-var transitions = require('./fixtures/bit_flip_transitions');
-var verifications = require('./fixtures/bit_flip_verifications'); 
+var transitions = require('./models/bit_flip').transitions;
+var verifications = require('./models/bit_flip').verifications; 
 
 var testPlan = createTestPlan(transitions, verifications);
 testPlan.forEach(function(test) {
