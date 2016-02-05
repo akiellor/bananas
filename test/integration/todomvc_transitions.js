@@ -15,11 +15,15 @@ function wait(driver) {
   }));
 }
 
+function hasSufficientTodosForFilters(model) {
+  return model.todos && model.todos.length > 1;
+}
+
 module.exports = [
   {
     name: 'select all filter',
     requires: function(model) {
-      return model.todos && active(model.todos).length > 0 && completed(model.todos).length > 0 && model.filter !== 'all';
+      return hasSufficientTodosForFilters(model) && model.filter !== 'all';
     },
     provides: {filter: 'all'},
     apply: function(driver) {
@@ -31,7 +35,7 @@ module.exports = [
   {
     name: 'select active filter',
     requires: function(model) {
-      return model.todos && active(model.todos).length > 0 && completed(model.todos).length > 0 && model.filter !== 'active';
+      return hasSufficientTodosForFilters(model) && model.filter !== 'active';
     },
     provides: {filter: 'active'},
     apply: function(driver) {
@@ -43,7 +47,7 @@ module.exports = [
   {
     name: 'select completed filter',
     requires: function(model) {
-      return model.todos && active(model.todos).length > 0 && completed(model.todos).length > 0 && model.filter !== 'completed';
+      return hasSufficientTodosForFilters(model) && model.filter !== 'completed';
     },
     provides: {filter: 'completed'},
     apply: function(driver) {
