@@ -20,7 +20,7 @@ describe('revisit_transitions strategy', function() {
 
     var testPlanNames = toNames(testPlan);
 
-    expect(testPlanNames).to.equal(Immutable.fromJS([
+    expect(testPlanNames.toSet()).to.equal(Immutable.fromJS([
       ['init', 'fill', 'pour', 'fill half', 'add 0.5'],
       ['init', 'add 0.5', 'pour', 'fill'],
       ['init', 'fill half', 'pour', 'add 0.5', 'fill'],
@@ -30,7 +30,7 @@ describe('revisit_transitions strategy', function() {
       ['init', 'add 0.5', 'fill', 'pour', 'fill half'],
       ['init', 'fill half', 'pour', 'fill'],
       ['init', 'fill half', 'add 0.5', 'pour', 'fill']
-    ]));
+    ]).toSet());
   });
 
   it('should not provide multiple permutations of the same transitions', function() {
