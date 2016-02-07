@@ -37,6 +37,7 @@ describe('verification group', function() {
     expect(function() { group.get('apply')(undefined) })
       .to.throw(Error)
       .and.to.satisfy(function(error) {
+        expect(error.message).to.equal('never gonna work: expected false to equal true\nreally never gonna work: expected false to equal true');
         expect(error.errors.length).to.equal(2);
         var first = error.errors[0];
         expect(first.error.message).to.equal("expected false to equal true");
