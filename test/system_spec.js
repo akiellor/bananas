@@ -11,15 +11,25 @@ var fixtures = [
     system: require('./systems/cup'),
     model: require('./models/cup')
   }
-]
+];
+
+var strategies = [
+  require(__dirname + '/../lib/strategies/all_edges'),
+  require(__dirname + '/../lib/strategies/revisit_transitions')
+];
 
 describe('systems', function() {
-  fixtures.forEach(function(fixture) {
-    describe(fixture.name, function() {
-      var testPlan = createTestPlan(fixture.model.transitions, fixture.model.verifications);
-      testPlan.forEach(function(test) {
-        it(test.name, function() {
-          test.apply(fixture.system());
+  strategies.forEach(function(strategy) {
+    describe(strategy.name, function() {
+      fixtures.forEach(function(fixture) {
+        var testPlan = createTestPlan(fixture.model.transitions, fixture.model.verifications, strategy);
+
+        describe(fixture.name + ' (' + testPlan.length + ')', function() {
+          testPlan.forEach(function(test) {
+            it(test.name, function() {
+              test.apply(fixture.system());
+            });
+          });
         });
       });
     });
