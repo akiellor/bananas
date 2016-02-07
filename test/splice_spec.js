@@ -40,9 +40,9 @@ describe('splice', function() {
 
     expect(result).to.equal(I([
       "first",
-      "second",
+      "group('second')",
       "third",
-      "fourth"
+      "group('fourth')"
     ]));
   });
 });

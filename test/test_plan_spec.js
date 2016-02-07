@@ -20,6 +20,6 @@ describe('test plan', function() {
       return scenario.name;
     });
 
-    expect(names).to.deep.equal(['334e0']);
+    expect(names).to.deep.equal(['af5f5']);
   });
 });
