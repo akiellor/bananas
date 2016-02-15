@@ -1,28 +1,18 @@
-var webdriver = require('selenium-webdriver');
 var createTestPlan = require(__dirname + '/../lib/test_plan');
 var transitions = require(__dirname + '/models/todomvc').transitions;
 var verifications = require(__dirname + '/models/todomvc').verifications;
-
-var options = {
-  host: 'localhost',
-  port: '9515',
-  desiredCapabilities: {
-    browserName: 'chrome'
-  }
-};
+var todomvc = require(__dirname + '/systems/todomvc');
 
 describe('todomvc', function() {
   this.timeout(100000);
   var driver;
 
   before(function() {
-    driver = new webdriver.Builder()
-      .forBrowser('chrome')
-      .build();
+    driver = todomvc();
   });
 
   beforeEach(function() {
-    driver.get('http://todomvc.com/examples/angularjs/#/');
+    driver.get('http://localhost:8000');
   });
 
   var testPlan = createTestPlan(transitions, verifications);

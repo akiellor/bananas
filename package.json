@@ -2,7 +2,7 @@
   "name": "bananas",
   "version": "1.0.0",
   "scripts": {
-    "test": "mocha --recursive",
+    "test": "mocha test/**/*_spec.js",
     "build": "browserify -s bananas lib/scenario_builder.js -o bananas.js"
   },
   "license": "MIT",
@@ -12,8 +12,7 @@
     "chai-immutable": "^1.5.3",
     "chai-spies": "^0.7.0",
     "mocha": "^2.2.5",
-    "selenium-webdriver": "^2.48.2",
-    "webdriverio": "^3.4.0"
+    "selenium-webdriver": "^2.48.2"
   },
   "dependencies": {
     "graphviz": "0.0.8",

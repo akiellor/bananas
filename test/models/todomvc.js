@@ -15,6 +15,16 @@ function completed(todos) {
   return todos.filter(function(todo) { return todo.state === 'completed'; });
 }
 
+function wait(driver) {
+  var foo = false;
+  setTimeout(function() {
+    foo = true;
+  }, 10000000);
+  driver.wait(new webdriver.until.Condition('', function() {
+    return foo;
+  }));
+}
+
 module.exports.transitions = [
   {
     name: 'select all filter',
@@ -77,13 +87,12 @@ module.exports.transitions = [
       return model;
     },
     apply: function(driver, model) {
-      model.todos.forEach(function(todo) {
-        driver
-          .wait(until.elementLocated(By.css("#new-todo")));
-        driver
-          .findElement(By.css("#new-todo"))
-          .sendKeys(todo.title + "\n");
-      });
+      var todo = model.todos[model.todos.length - 1];
+      driver
+        .wait(until.elementLocated(By.css(".new-todo")));
+      driver
+        .findElement(By.css(".new-todo"))
+        .sendKeys(todo.title + "\n");
     }
   },
   {
@@ -98,7 +107,7 @@ module.exports.transitions = [
     },
     apply: function(driver) {
       driver
-        .findElement(By.css("#todo-list li .toggle")).click();
+        .findElement(By.css(".todo-list li .toggle")).click();
     }
   },
   {
@@ -112,7 +121,7 @@ module.exports.transitions = [
     },
     apply: function(driver) {
       driver
-        .findElement(By.css("#todo-list li"))
+        .findElement(By.css(".todo-list li"))
         .then(function(elem) {
           driver.actions().mouseMove(elem).perform();
           elem.findElement(By.css('.destroy')).click();
@@ -130,7 +139,7 @@ module.exports.transitions = [
     },
     apply: function(driver) {
       driver
-        .findElement(By.css("#clear-completed"))
+        .findElement(By.css(".clear-completed"))
         .click();
     }
   }
@@ -153,7 +162,7 @@ module.exports.verifications = [
       return model.todos && model.filter === 'all';
     },
     apply: function(driver, model) {
-      getTexts(driver, "#todo-list li").then(function(texts) {
+      getTexts(driver, ".todo-list li").then(function(texts) {
         var todos = model.todos;
         expect(texts.length).to.equal(todos.length);
         todos.forEach(function(todo) {
@@ -168,7 +177,7 @@ module.exports.verifications = [
       return model.todos && model.filter === 'active';
     },
     apply: function(driver, model) {
-      getTexts(driver, "#todo-list li").then(function(texts) {
+      getTexts(driver, ".todo-list li").then(function(texts) {
         var todos = active(model.todos);
         expect(texts.length).to.equal(todos.length);
         todos.forEach(function(todo) {
@@ -184,7 +193,7 @@ module.exports.verifications = [
     },
     apply: function(driver, model) {
       var todos = completed(model.todos);
-      getTexts(driver, "#todo-list li.completed").then(function(texts) {
+      getTexts(driver, ".todo-list li.completed").then(function(texts) {
         expect(texts.length).to.equal(todos.length);
         todos.forEach(function(todo) {
           expect(texts).to.contain(todo.title);
@@ -198,7 +207,7 @@ module.exports.verifications = [
       return active(model.todos).length === 1;
     },
     apply: function(driver, model) {
-      driver.findElement(By.css('#todo-count')).getText().then(function(text) {
+      driver.findElement(By.css('.todo-count')).getText().then(function(text) {
         expect(text).to.equal('1 item left');
       });
     }
@@ -209,7 +218,7 @@ module.exports.verifications = [
       return active(model.todos).length > 1;
     },
     apply: function(driver, model) {
-      driver.findElement(By.css('#todo-count')).getText().then(function(text) {
+      driver.findElement(By.css('.todo-count')).getText().then(function(text) {
         expect(text).to.equal(model.todos.length + ' items left');
       });
     }
@@ -220,7 +229,7 @@ module.exports.verifications = [
       return model.todos && model.todos.length > 0 && active(model.todos).length === 0;
     },
     apply: function(driver, model) {
-      driver.findElement(By.css('#todo-count')).getText().then(function(text) {
+      driver.findElement(By.css('.todo-count')).getText().then(function(text) {
         expect(text).to.equal('0 items left');
       });
     }
