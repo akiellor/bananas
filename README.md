@@ -14,7 +14,7 @@ Bananas is a testing tool, which instead of focusing on distinct 'scenarios' or 
 
 * These suites will often test the same paths over and over again with subtle variations, this contributes to the tests being long.
 
-* Poor organization of these suites often results in new developers duplicating scenarios or assertions when adding new tests.
+* Poor organization of these suites often results in new developers duplicating scenarios or assertions when adding new tests, this compounds the problem.
 
 * The ratio between number of system behaviours or user interactions to lines of test code is often quite poor.
 
