@@ -1,6 +1,6 @@
 # Bananas (name pending) [EXPERIMENTAL]
 
-An experimental alternative to example based testing for system testing or end to end testing.
+An experimental alternative to example based testing for system testing.
 
 ## What is it?
 
