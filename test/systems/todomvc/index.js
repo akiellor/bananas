@@ -1,8 +1,18 @@
 var webdriver = require('selenium-webdriver');
-var spawn = require('child_process').spawn;
+
+var finalhandler = require('finalhandler')
+var http = require('http')
+var serveStatic = require('serve-static')
 
 module.exports = function todomvc(cb) {
-  var process = spawn('python', ['-m', 'SimpleHTTPServer', '8000'], {cwd: 'test/systems/todomvc/app', stdio: 'inherit'});
+  var serve = serveStatic('test/systems/todomvc/app');
+
+  var server = http.createServer(function(req, res){
+    var done = finalhandler(req, res);
+    serve(req, res, done);
+  });
+
+  server.listen(8000);
 
   var driver = new webdriver.Builder()
     .forBrowser('chrome')

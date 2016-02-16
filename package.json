@@ -11,8 +11,10 @@
     "chai": "^3.2.0",
     "chai-immutable": "^1.5.3",
     "chai-spies": "^0.7.0",
+    "finalhandler": "^0.4.1",
     "mocha": "^2.2.5",
-    "selenium-webdriver": "^2.48.2"
+    "selenium-webdriver": "^2.48.2",
+    "serve-static": "^1.10.2"
   },
   "dependencies": {
     "graphviz": "0.0.8",
