@@ -16,7 +16,22 @@ The problems stated above stem from using example based testing tools (xUnit) vi
 
 ## What is it?
 
-Bananas is a testing tool, which instead of focusing on distinct 'scenarios' or 'examples', focuses on 'transitions' that can be performed and the context in which those transitions can be performed. The tool is then responsible for constructing sets of 'transitions' in sequence and then running them.
+Bananas is a testing tool, which instead of focusing on distinct 'scenarios' or 'examples', focuses of modelling the system as a state machine. With this state machine, Bananas will traverse a set of possible model states for the system and validate the actual system under test is in the desired state.
+
+## Terminology
+
+* **Test Plan**: A test plan is a set of tests. 
+
+* **Test**: A valid sequence of transitions with assertions interleaved.
+
+* **Transition**: A transition is composed of the following:
+  * **requires**: A predicate to determine if the ***transition*** is applicable for the given ***model-state***.
+  * **provides**: A transformation applied to the ***model-state***, this transformation indicates how the ***transition*** should change the ***system-state***.
+  * **apply**: A mutation applied to the system under test.
+
+* **Verification**: A verification is composed of the following:
+  * **requires**: A predicate to determine if the ***verification*** is applicable for the given ***model-state***.
+  * **apply**: An assertion against the system under test.
 
 ## Status
 
