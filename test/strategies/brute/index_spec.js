@@ -7,7 +7,6 @@ var expect = chai.expect;
 var brute = require(__dirname + '/../../../lib/strategies/brute');
 var strategyBehaviours = require(__dirname + '/../strategy_behaviours');
 var toNames = require(__dirname + '/../../to_names');
-
 var cupFixture = require(__dirname + '/../../models/cup');
 
 describe('brute strategy', function() {
