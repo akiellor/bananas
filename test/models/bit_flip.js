@@ -1,16 +1,16 @@
 var expect = require('chai').expect;
 
 function noProp(name) {
-  return function(model) {
-    return !model.hasOwnProperty(name);
+  return function(state) {
+    return !state.hasOwnProperty(name);
   };
 }
 
 module.exports.transitions = [
   {
     name: 'init',
-    requires: function(model) {
-      return !model.hasOwnProperty('first') && !model.hasOwnProperty('second') && !model.hasOwnProperty('third');
+    requires: function(state) {
+      return !state.hasOwnProperty('first') && !state.hasOwnProperty('second') && !state.hasOwnProperty('third');
     },
     provides: {first: 0, second: 0, third: 0},
     apply: function() {}

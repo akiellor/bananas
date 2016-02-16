@@ -5,7 +5,7 @@ chai.use(chaiImmutable);
 var expect = chai.expect;
 
 var findByRequirement = require(__dirname + '/../../lib/find_by');
-var updateModel = require(__dirname + '/../../lib/update_model');
+var updateState = require(__dirname + '/../../lib/update_state');
 var toNames = require(__dirname + '/../to_names');
 
 var cupFixture = require(__dirname + '/../models/cup');
@@ -22,12 +22,12 @@ module.exports = function strategyBehaviours(strategy) {
       var testPlan = strategy(Immutable.fromJS(fixture.transitions), Immutable.fromJS(fixture.verifications));
 
       testPlan.forEach(function(scenario) {
-        var model = Immutable.Map({});
+        var state = Immutable.Map({});
 
         scenario.forEach(function(transition) {
-          var found = findByRequirement(model, Immutable.List([transition]));
+          var found = findByRequirement(state, Immutable.List([transition]));
           expect(found.size).to.equal(1);
-          model = updateModel(model, transition);
+          state = updateState(state, transition);
         });
       });
     });

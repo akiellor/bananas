@@ -15,17 +15,17 @@ describe('splice', function() {
       },
       {
         name: 'third',
-        provides: function(model) {
-          model.third = 1;
-          return model;
+        provides: function(state) {
+          state.third = 1;
+          return state;
         }
       }
     ]);
     var list2 = I([
       {
         name: 'second',
-        requires: function(model) {
-          return model.first && !model.third;
+        requires: function(state) {
+          return state.first && !state.third;
         }
       },
       {

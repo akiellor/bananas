@@ -3,8 +3,8 @@ var By = webdriver.By;
 var until = webdriver.until;
 var expect = require('chai').expect;
 
-function hasSufficientTodosForFilters(model) {
-  return model.todos && model.todos.length > 1;
+function hasSufficientTodosForFilters(state) {
+  return state.todos && state.todos.length > 1;
 }
 
 function active(todos) {
@@ -28,8 +28,8 @@ function wait(driver) {
 module.exports.transitions = [
   {
     name: 'select all filter',
-    requires: function(model) {
-      return hasSufficientTodosForFilters(model) && model.filter !== 'all';
+    requires: function(state) {
+      return hasSufficientTodosForFilters(state) && state.filter !== 'all';
     },
     provides: {filter: 'all'},
     apply: function(driver) {
@@ -40,8 +40,8 @@ module.exports.transitions = [
   },
   {
     name: 'select active filter',
-    requires: function(model) {
-      return hasSufficientTodosForFilters(model) && model.filter !== 'active';
+    requires: function(state) {
+      return hasSufficientTodosForFilters(state) && state.filter !== 'active';
     },
     provides: {filter: 'active'},
     apply: function(driver) {
@@ -52,8 +52,8 @@ module.exports.transitions = [
   },
   {
     name: 'select completed filter',
-    requires: function(model) {
-      return hasSufficientTodosForFilters(model) && model.filter !== 'completed';
+    requires: function(state) {
+      return hasSufficientTodosForFilters(state) && state.filter !== 'completed';
     },
     provides: {filter: 'completed'},
     apply: function(driver) {
@@ -64,30 +64,30 @@ module.exports.transitions = [
   },
   {
     name: 'init todos',
-    requires: function(model) {
-      return !model.todos;
+    requires: function(state) {
+      return !state.todos;
     },
-    provides: function(model) {
-      model.filter = 'all';
-      model.todos = [];
-      return model;
+    provides: function(state) {
+      state.filter = 'all';
+      state.todos = [];
+      return state;
     },
     apply: function() {}
   },
   {
     name: 'add todo',
-    requires: function(model) {
-      if (model.todos && model.todos[0] && model.todos[0].title === '1') {
+    requires: function(state) {
+      if (state.todos && state.todos[0] && state.todos[0].title === '1') {
         return false;
       }
-      return model.todos && model.todos.length < 2;
+      return state.todos && state.todos.length < 2;
     },
-    provides: function(model) {
-      model.todos.push({title: '' + model.todos.length, state: 'active'});
-      return model;
+    provides: function(state) {
+      state.todos.push({title: '' + state.todos.length, state: 'active'});
+      return state;
     },
-    apply: function(driver, model) {
-      var todo = model.todos[model.todos.length - 1];
+    apply: function(driver, state) {
+      var todo = state.todos[state.todos.length - 1];
       driver
         .wait(until.elementLocated(By.css(".new-todo")));
       driver
@@ -97,13 +97,13 @@ module.exports.transitions = [
   },
   {
     name: 'complete todo',
-    requires: function(model) {
-      return model.todos && model.todos[0] && model.todos[0].state === "active" && (model.filter === 'all' || model.filter === 'active');
+    requires: function(state) {
+      return state.todos && state.todos[0] && state.todos[0].state === "active" && (state.filter === 'all' || state.filter === 'active');
     },
-    provides: function(model) {
-      var todo = model.todos[0];
+    provides: function(state) {
+      var todo = state.todos[0];
       todo.state = 'completed';
-      return model;
+      return state;
     },
     apply: function(driver) {
       driver
@@ -112,12 +112,12 @@ module.exports.transitions = [
   },
   {
     name: 'delete todo from all',
-    requires: function(model) {
-      return model.todos && model.todos.length > 0 && model.filter === 'all';
+    requires: function(state) {
+      return state.todos && state.todos.length > 0 && state.filter === 'all';
     },
-    provides: function(model) {
-      model.todos = model.todos.slice(1);
-      return model;
+    provides: function(state) {
+      state.todos = state.todos.slice(1);
+      return state;
     },
     apply: function(driver) {
       driver
@@ -130,12 +130,12 @@ module.exports.transitions = [
   },
   {
     name: 'clear completed',
-    requires: function(model) {
-      return model.todos && completed(model.todos).length > 0 && model.filter === 'all';
+    requires: function(state) {
+      return state.todos && completed(state.todos).length > 0 && state.filter === 'all';
     },
-    provides: function(model) {
-      model.todos = active(model.todos);
-      return model;
+    provides: function(state) {
+      state.todos = active(state.todos);
+      return state;
     },
     apply: function(driver) {
       driver
@@ -158,12 +158,12 @@ function getTexts(driver, selector) {
 module.exports.verifications = [
   {
     name: 'verify all todos',
-    requires: function(model) {
-      return model.todos && model.filter === 'all';
+    requires: function(state) {
+      return state.todos && state.filter === 'all';
     },
-    apply: function(driver, model) {
+    apply: function(driver, state) {
       getTexts(driver, ".todo-list li").then(function(texts) {
-        var todos = model.todos;
+        var todos = state.todos;
         expect(texts.length).to.equal(todos.length);
         todos.forEach(function(todo) {
           expect(texts).to.contain(todo.title);
@@ -173,12 +173,12 @@ module.exports.verifications = [
   },
   {
     name: 'verify active todos',
-    requires: function(model) {
-      return model.todos && model.filter === 'active';
+    requires: function(state) {
+      return state.todos && state.filter === 'active';
     },
-    apply: function(driver, model) {
+    apply: function(driver, state) {
       getTexts(driver, ".todo-list li").then(function(texts) {
-        var todos = active(model.todos);
+        var todos = active(state.todos);
         expect(texts.length).to.equal(todos.length);
         todos.forEach(function(todo) {
           expect(texts).to.contain(todo.title);
@@ -188,11 +188,11 @@ module.exports.verifications = [
   },
   {
     name: 'verify completed todos',
-    requires: function(model) {
-      return model.todos && model.filter === 'completed';
+    requires: function(state) {
+      return state.todos && state.filter === 'completed';
     },
-    apply: function(driver, model) {
-      var todos = completed(model.todos);
+    apply: function(driver, state) {
+      var todos = completed(state.todos);
       getTexts(driver, ".todo-list li.completed").then(function(texts) {
         expect(texts.length).to.equal(todos.length);
         todos.forEach(function(todo) {
@@ -203,10 +203,10 @@ module.exports.verifications = [
   },
   {
     name: 'verify todos remaining',
-    requires: function(model) {
-      return active(model.todos).length === 1;
+    requires: function(state) {
+      return active(state.todos).length === 1;
     },
-    apply: function(driver, model) {
+    apply: function(driver, state) {
       driver.findElement(By.css('.todo-count')).getText().then(function(text) {
         expect(text).to.equal('1 item left');
       });
@@ -214,21 +214,21 @@ module.exports.verifications = [
   },
   {
     name: 'verify multiple todos remaining',
-    requires: function(model) {
-      return active(model.todos).length > 1;
+    requires: function(state) {
+      return active(state.todos).length > 1;
     },
-    apply: function(driver, model) {
+    apply: function(driver, state) {
       driver.findElement(By.css('.todo-count')).getText().then(function(text) {
-        expect(text).to.equal(model.todos.length + ' items left');
+        expect(text).to.equal(state.todos.length + ' items left');
       });
     }
   },
   {
     name: 'verify todos remaining when none active',
-    requires: function(model) {
-      return model.todos && model.todos.length > 0 && active(model.todos).length === 0;
+    requires: function(state) {
+      return state.todos && state.todos.length > 0 && active(state.todos).length === 0;
     },
-    apply: function(driver, model) {
+    apply: function(driver, state) {
       driver.findElement(By.css('.todo-count')).getText().then(function(text) {
         expect(text).to.equal('0 items left');
       });

@@ -3,43 +3,43 @@ var expect = require('chai').expect;
 module.exports.transitions = [
   {
     name: 'init',
-    requires: function(model) {
-      return !model.hasOwnProperty('volume');
+    requires: function(state) {
+      return !state.hasOwnProperty('volume');
     },
     provides: {volume: 0},
     apply: function() {}
   },
   {
     name: 'pour',
-    requires: function(model) {
-      return model.volume > 0;
+    requires: function(state) {
+      return state.volume > 0;
     },
     provides: {volume: 0},
     apply: function(system) { system.pour(); }
   },
   {
     name: 'fill half',
-    requires: function(model) {
-      return model.volume === 0;
+    requires: function(state) {
+      return state.volume === 0;
     },
     provides: {volume: 0.5},
     apply: function(system) { system.add(0.5); }
   },
   {
     name: 'add 0.5',
-    requires: function(model) {
-      return model.volume !== undefined && model.volume !== 1;
+    requires: function(state) {
+      return state.volume !== undefined && state.volume !== 1;
     },
-    provides: function(model) {
-      model.volume = model.volume + 0.5;
-      return model;
+    provides: function(state) {
+      state.volume = state.volume + 0.5;
+      return state;
     },
     apply: function(system) { system.add(0.5); }
   },
   {
     name: 'fill',
-    requires: function(model) {
-      return model.volume < 1;
+    requires: function(state) {
+      return state.volume < 1;
     },
     provides: {volume: 1},
     apply: function(system) { system.fill(); }

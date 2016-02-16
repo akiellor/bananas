@@ -23,7 +23,7 @@ describe('path', function() {
 
   it('should support transitions with fn provides', function() {
     var t1 = Immutable.fromJS({requires: {}, provides: {foo: true}})
-    var t2 = Immutable.fromJS({requires: {}, provides: function(model) { model.bar = true; return model; }});
+    var t2 = Immutable.fromJS({requires: {}, provides: function(state) { state.bar = true; return state; }});
     var path = createPath()
       .add(t1)
       .add(t2)
