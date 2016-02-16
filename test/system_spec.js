@@ -14,8 +14,8 @@ var fixtures = [
 ];
 
 var strategies = [
-  require(__dirname + '/../lib/strategies/all_edges'),
-  require(__dirname + '/../lib/strategies/random_walk')
+  require(__dirname + '/../lib/strategies/brute'),
+  require(__dirname + '/../lib/strategies/quick')
 ];
 
 describe('systems', function() {

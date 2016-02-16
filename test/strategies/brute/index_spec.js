@@ -4,17 +4,17 @@ var chaiImmutable = require('chai-immutable');
 chai.use(chaiImmutable);
 var expect = chai.expect;
 
-var allEdges = require(__dirname + '/../../../lib/strategies/all_edges/');
+var brute = require(__dirname + '/../../../lib/strategies/brute');
 var strategyBehaviours = require(__dirname + '/../strategy_behaviours');
 var toNames = require(__dirname + '/../../to_names');
 
 var cupFixture = require(__dirname + '/../../models/cup');
 
-describe('all edges strategy', function() {
+describe('brute strategy', function() {
   this.timeout(5000);
 
   it('should generate paths to hit all state graph edges', function() {
-    var testPlan = allEdges(Immutable.fromJS(cupFixture.transitions));
+    var testPlan = brute(Immutable.fromJS(cupFixture.transitions));
 
     var testPlanNames = toNames(testPlan);
 
@@ -27,5 +27,5 @@ describe('all edges strategy', function() {
     ]));
   });
 
-  strategyBehaviours(allEdges);
+  strategyBehaviours(brute);
 });
