@@ -14,7 +14,7 @@ describe('all edges strategy', function() {
   this.timeout(5000);
 
   it('should generate paths to hit all state graph edges', function() {
-    var testPlan = allEdges(Immutable.fromJS(cupFixture.transitions), Immutable.fromJS(cupFixture.verifications));
+    var testPlan = allEdges(Immutable.fromJS(cupFixture.transitions));
 
     var testPlanNames = toNames(testPlan);
 

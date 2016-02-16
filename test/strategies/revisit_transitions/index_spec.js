@@ -16,7 +16,7 @@ describe('revisit_transitions strategy', function() {
   this.timeout(5000);
 
   it('should allow transitions where requirements satisfied by previous transition', function() {
-    var testPlan = revisit(Immutable.fromJS(cupFixture.transitions), Immutable.fromJS(cupFixture.verifications));
+    var testPlan = revisit(Immutable.fromJS(cupFixture.transitions));
 
     var testPlanNames = toNames(testPlan);
 
@@ -34,7 +34,7 @@ describe('revisit_transitions strategy', function() {
   });
 
   it('should not provide multiple permutations of the same transitions', function() {
-    var testPlan = revisit(Immutable.fromJS(fooChainFixture.transitions), Immutable.fromJS(fooChainFixture.verifications));
+    var testPlan = revisit(Immutable.fromJS(fooChainFixture.transitions));
 
     expect(testPlan.size).to.equal(1);
     expect(testPlan.getIn([0, 0, 'name'])).to.equal('foo');
