@@ -53,7 +53,7 @@ A reasonably complete model for todomvc can be found [here](test/models/todomvc.
 
 A weighted random walk is still being investigated as a way of encoding things like *highest value scenario*.
 
-### Introspection
+### Inspection
 
 Given the data centric nature of the defined models, it is easy to perform analysis or display information in different ways.
 
