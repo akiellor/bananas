@@ -10,7 +10,7 @@ var createTestPlan = require(__dirname + '/../lib/test_plan');
 
 describe('test plan', function() {
   it('should generate test hash identifiers based on the step names', function() {
-    var testPlan = createTestPlan(cupFixture.transitions, cupFixture.verifications, function(transitions, verifications) {
+    var testPlan = createTestPlan(cupFixture, function(transitions) {
       return Immutable.List([
         Immutable.List([transitions.get(0), transitions.get(2)])
       ]);

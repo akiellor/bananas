@@ -23,7 +23,7 @@ describe('systems', function() {
   strategies.forEach(function(strategy) {
     describe(strategy.name, function() {
       fixtures.forEach(function(fixture) {
-        var testPlan = createTestPlan(fixture.model.transitions, fixture.model.verifications, strategy);
+        var testPlan = createTestPlan(fixture.model, strategy);
 
         describe(fixture.name + ' (' + testPlan.length + ')', function() {
           testPlan.forEach(function(test) {

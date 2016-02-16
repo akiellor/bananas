@@ -1,6 +1,5 @@
 var createTestPlan = require(__dirname + '/../lib/test_plan');
-var transitions = require(__dirname + '/models/todomvc').transitions;
-var verifications = require(__dirname + '/models/todomvc').verifications;
+var todomvcModel = require(__dirname + '/models/todomvc');
 var todomvc = require(__dirname + '/systems/todomvc');
 
 describe('todomvc', function() {
@@ -15,7 +14,7 @@ describe('todomvc', function() {
     driver.get('http://localhost:8000');
   });
 
-  var testPlan = createTestPlan(transitions, verifications);
+  var testPlan = createTestPlan(todomvcModel);
   testPlan.forEach(function(test) {
     it(test.name, function(done) {
       test.apply(driver);
