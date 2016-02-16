@@ -55,7 +55,7 @@ A weighted random walk is still being investigated as a way of encoding things l
 
 ### Inspection
 
-Given the data centric nature of the defined models, it is easy to perform analysis or display information in different ways.
+Given the data centric nature of the defined models, it is easy to perform analysis or display information about the model in different ways.
 
 The [states](bin/states) script is able to take a model and generate a **graphviz** compatible graph of all the possible states and the valid transitions between them. Find an example [here](docs/todo-state-diagram.png) for the todomvc model.
 
