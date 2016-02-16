@@ -1,6 +1,10 @@
 # Bananas (name pending) [EXPERIMENTAL]
 
-An experimental alternative to example based testing.
+An experimental alternative to example based testing for system testing or end to end testing.
+
+## What is it?
+
+Bananas is a testing tool, which instead of focusing on distinct 'scenarios' or 'examples', focuses of modelling the system as a state machine. With this state machine, Bananas will generate a set of tests which exercise and verify the system under test.
 
 ## Motivation
 
@@ -10,13 +14,11 @@ An experimental alternative to example based testing.
 
 * These suites will often test the same paths over and over again with subtle variations, this contributes to the tests being long.
 
-## Hypothesis
+* Poor organization of these suites often results in new developers duplicating scenarios or assertions when adding new tests.
 
-The problems stated above stem from using example based testing tools (xUnit) via an interface that is inherently slow.
+* The ratio between number of system behaviours or user interactions to lines of test code is often quite poor.
 
-## What is it?
-
-Bananas is a testing tool, which instead of focusing on distinct 'scenarios' or 'examples', focuses of modelling the system as a state machine. With this state machine, Bananas will traverse a set of possible model states for the system and validate the actual system under test is in the desired state.
+The underlying hypothesis is that these problems stem from using example based testing tools (xUnit) via an interface that is inherently slow.
 
 ## Terminology
 
@@ -35,12 +37,22 @@ Bananas is a testing tool, which instead of focusing on distinct 'scenarios' or 
 
 ## Status
 
-***DONE-ISH***
+The project is currently in active development and research. Things will unapologetically break as this is an experiment.
 
-* The project has a basic implementation that can generate an exhaustive suite for a TodoMVC application. [TodoMVC Test Model](test/integration)
-* From the same test model, generate a state transition diagram. [TodoMVC State Diagram](docs/todo-state-diagram.png)
-* Run a full suite using `npm test`
+Contributions in the form of ideas, code or feedback are all welcome.
 
-***UP NEXT***
+There has been some progress in the following areas:
 
-* Improve test generation, allowing for more tuning of test plans 
+### Generation
+
+There are currently two strategies for generating tests named **brute** and **quick**. Brute will exercise every transition possible from every system state possible in the defined model. Quick follows a [Random Walk](https://en.wikipedia.org/wiki/Random_walk) through the model, generating a single test. Both of these strategies are used in the [System Spec](test/system_spec.js).
+
+A weighted random walk is still being investigated as a way of encoding things like *highest value scenario*.
+
+### Introspection
+
+Given the data centric nature of the defined models, it is easy to perform analysis or display information in different ways.
+
+The [states](bin/states) script is able to take a model and generate a *graphviz* compatible graph of all the possible states and the valid transitions between them. Find an example [here](docs/todo-state-diagram.png) for the todomvc model.
+
+There is still much room for improvement when it comes to test plan analysis and test naming. The current naming strategy is a hash of the transition names in the the test, this is not very user freindly.
