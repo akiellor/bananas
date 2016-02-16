@@ -18,6 +18,8 @@ Bananas is a testing tool, which instead of focusing on distinct 'scenarios' or 
 
 * The ratio between number of system behaviours or user interactions to lines of test code is often quite poor.
 
+* Visibility into what the test suite does can often be very difficult to find on large suites.
+
 The underlying hypothesis is that these problems stem from using example based testing tools (xUnit) via an interface that is inherently slow.
 
 ## Terminology
@@ -46,6 +48,8 @@ There has been some progress in the following areas:
 ### Generation
 
 There are currently two strategies for generating tests named **brute** and **quick**. Brute will exercise every transition possible from every system state possible in the defined model. Quick follows a [Random Walk](https://en.wikipedia.org/wiki/Random_walk) through the model, generating a single test. Both of these strategies are used in the [System Spec](test/system_spec.js).
+
+A reasonably complete model for todomvc can be found [here](test/models/todomvc.js)
 
 A weighted random walk is still being investigated as a way of encoding things like *highest value scenario*.
 
