@@ -57,6 +57,6 @@ A weighted random walk is still being investigated as a way of encoding things l
 
 Given the data centric nature of the defined models, it is easy to perform analysis or display information in different ways.
 
-The [states](bin/states) script is able to take a model and generate a *graphviz* compatible graph of all the possible states and the valid transitions between them. Find an example [here](docs/todo-state-diagram.png) for the todomvc model.
+The [states](bin/states) script is able to take a model and generate a **graphviz** compatible graph of all the possible states and the valid transitions between them. Find an example [here](docs/todo-state-diagram.png) for the todomvc model.
 
 There is still much room for improvement when it comes to test plan analysis and test naming. The current naming strategy is a hash of the transition names in the the test, this is not very user freindly.
