@@ -75,6 +75,40 @@ module.exports.transitions = [
     apply: function() {}
   },
   {
+    name: 'shortcut to 2 todos',
+    requires: function(state) {
+      return !state.todos;
+    },
+    provides: {
+      filter: 'all',
+      todos: [
+        {
+          title: '0',
+          state: "active"
+        },
+        {
+          title: '1',
+          state: "active"
+        }
+      ]
+    },
+    apply: function(driver, state) {
+      var data = JSON.stringify(JSON.stringify({
+        filter: state.filter,
+        todos: state.todos.map(function(todo) {
+          return {
+            id: Math.floor(Math.random() * 1000),
+            title: todo.title,
+            completed: todo.state === 'completed'
+          };
+        })
+      }));
+
+      driver.executeScript('window.localStorage.setItem("todos-vanillajs", ' + data + ');');
+      driver.navigate().refresh();
+    }
+  },
+  {
     name: 'add todo',
     requires: function(state) {
       if (state.todos && state.todos[0] && state.todos[0].title === '1') {
