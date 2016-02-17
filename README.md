@@ -22,6 +22,12 @@ Bananas is a testing tool, which instead of focusing on distinct 'scenarios' or 
 
 The underlying hypothesis is that these problems stem from using example based testing tools (xUnit) via an interface that is inherently slow.
 
+## Goals
+
+* Reduce the overall maintenance cost of system tests.
+
+* Drive a better system design through thinking about explicit system states.
+
 ## Terminology
 
 * **Test Plan**: A test plan is a set of tests. 
