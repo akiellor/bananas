@@ -8,11 +8,15 @@ function hasSufficientTodosForFilters(state) {
 }
 
 function active(todos) {
-  return todos.filter(function(todo) { return todo.state === 'active'; });
+  return todos.filter(function(todo) {
+    return todo.state === 'active';
+  });
 }
 
 function completed(todos) {
-  return todos.filter(function(todo) { return todo.state === 'completed'; });
+  return todos.filter(function(todo) {
+    return todo.state === 'completed';
+  });
 }
 
 function wait(driver) {
@@ -31,7 +35,9 @@ module.exports.transitions = [
     requires: function(state) {
       return hasSufficientTodosForFilters(state) && state.filter !== 'all';
     },
-    provides: {filter: 'all'},
+    provides: {
+      filter: 'all'
+    },
     apply: function(driver) {
       driver
         .findElement(By.linkText('All'))
@@ -43,7 +49,9 @@ module.exports.transitions = [
     requires: function(state) {
       return hasSufficientTodosForFilters(state) && state.filter !== 'active';
     },
-    provides: {filter: 'active'},
+    provides: {
+      filter: 'active'
+    },
     apply: function(driver) {
       driver
         .findElement(By.linkText('Active'))
@@ -55,7 +63,9 @@ module.exports.transitions = [
     requires: function(state) {
       return hasSufficientTodosForFilters(state) && state.filter !== 'completed';
     },
-    provides: {filter: 'completed'},
+    provides: {
+      filter: 'completed'
+    },
     apply: function(driver) {
       driver
         .findElement(By.linkText('Completed'))
@@ -83,7 +93,10 @@ module.exports.transitions = [
       return state.todos && state.todos.length < 2;
     },
     provides: function(state) {
-      state.todos.push({title: '' + state.todos.length, state: 'active'});
+      state.todos.push({
+        title: '' + state.todos.length,
+        state: 'active'
+      });
       return state;
     },
     apply: function(driver, state) {
@@ -147,12 +160,12 @@ module.exports.transitions = [
 
 function getTexts(driver, selector) {
   return driver
-  .findElements(By.css(selector))
-  .then(function(elems) {
-    return webdriver.promise.all(elems.map(function(elem) {
-      return elem.getText();
-    }));
-  });
+    .findElements(By.css(selector))
+    .then(function(elems) {
+      return webdriver.promise.all(elems.map(function(elem) {
+        return elem.getText();
+      }));
+    });
 }
 
 module.exports.verifications = [
