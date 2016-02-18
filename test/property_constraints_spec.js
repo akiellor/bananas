@@ -124,11 +124,26 @@ describe('Property Constraints', function() {
       withCardinality: '=3'
     }];
 
-    var candidateState = Immutable.Map({
+    var candidateState = Immutable.fromJS({
       'mandatoryProperty': [1, 2, 3]
     });
     var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(true);
+  });
+
+
+  it('Should fail hasProperty restrictions with cardinality', function() {
+
+    var constraint = [{
+      hasProperty: 'mandatoryProperty',
+      withCardinality: '<3'
+    }];
+
+    var candidateState = Immutable.fromJS({
+      'mandatoryProperty': [1, 2, 3]
+    });
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
+    expect(match).to.equal(false);
   });
 
   it('Should handle undefined with cardinality', function() {
