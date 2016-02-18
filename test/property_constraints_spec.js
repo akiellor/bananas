@@ -17,8 +17,22 @@ describe('Property Constraints', function() {
     var constraint = [{
       hasProperty: 'mandatoryProperty'
     }];
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(true);
+
+  });
+
+
+  it('Should verify hasNoProperty restrictions', function() {
+
+    var candidateState = Immutable.Map({
+      prop: 'value'
+    });
+    var constraint = [{
+      hasNoProperty: 'prop'
+    }];
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
+    expect(match).to.equal(false);
 
   });
 
@@ -30,7 +44,7 @@ describe('Property Constraints', function() {
     var constraint = [{
       hasProperty: 'mandatoryProperty'
     }];
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(false);
 
   });
@@ -45,7 +59,7 @@ describe('Property Constraints', function() {
     var constraint = [{
       hasProperty: 'mandatoryProperty'
     }];
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(false);
   });
 
@@ -59,7 +73,7 @@ describe('Property Constraints', function() {
     }, {
       hasProperty: 'otherProperty'
     }];
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(false);
 
     //when the property is not set
@@ -67,7 +81,7 @@ describe('Property Constraints', function() {
       'mandatoryProperty': 'someVal',
       'otherProperty': 'otherVal'
     });
-    match = propertyConstraints(constraint, candidateState);
+    match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(true);
   });
 
@@ -83,7 +97,7 @@ describe('Property Constraints', function() {
     var candidateState = Immutable.Map({
       'mandatoryProperty': 'someVal'
     });
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(false);
   });
 
@@ -98,7 +112,7 @@ describe('Property Constraints', function() {
     var candidateState = Immutable.Map({
       'mandatoryProperty': 'strike'
     });
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(true);
   });
 
@@ -113,9 +127,25 @@ describe('Property Constraints', function() {
     var candidateState = Immutable.Map({
       'mandatoryProperty': [1, 2, 3]
     });
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(true);
   });
+
+  it('Should handle undefined with cardinality', function() {
+
+    var constraint = [{
+      hasProperty: 'mandatoryProperty',
+      withCardinality: '=3'
+    }];
+
+    var candidateState = Immutable.Map({
+      'mandatoryProperty': undefined
+    });
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
+    expect(match).to.equal(false);
+  });
+
+
 
   it('Should verify hasProperty restrictions with withSome', function() {
 
@@ -127,7 +157,25 @@ describe('Property Constraints', function() {
     var candidateState = Immutable.Map({
       'mandatoryProperty': ['complete', 'done', 'vanity']
     });
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
+    expect(match).to.equal(true);
+  });
+
+  it('Should verify hasProperty restrictions with withSome function', function() {
+
+    var constraint = [{
+      hasProperty: 'mandatoryProperty',
+      withSome: function(value) {
+        return value.status === 'active';
+      }
+    }];
+
+    var candidateState = Immutable.Map({
+      'mandatoryProperty': [{
+        status: 'active'
+      }]
+    });
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(true);
   });
 
@@ -142,7 +190,7 @@ describe('Property Constraints', function() {
     var candidateState = Immutable.Map({
       'mandatoryProperty': ['complete', 'done', 'vanity']
     });
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(false);
   });
 
@@ -157,7 +205,7 @@ describe('Property Constraints', function() {
     var candidateState = Immutable.Map({
       'mandatoryProperty': ['complete', 'done', 'vanity']
     });
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(true);
   });
 
@@ -171,7 +219,7 @@ describe('Property Constraints', function() {
     var candidateState = Immutable.Map({
       'mandatoryProperty': ['complete', 'done', 'vanity']
     });
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(false);
   });
 
@@ -186,7 +234,7 @@ describe('Property Constraints', function() {
     var candidateState = Immutable.Map({
       'mandatoryProperty': ['complete', 'active']
     });
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(true);
   });
 
@@ -202,7 +250,7 @@ describe('Property Constraints', function() {
     var candidateState = Immutable.Map({
       'mandatoryProperty': ['complete', 'active', 'extra']
     });
-    var match = propertyConstraints(constraint, candidateState);
+    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
     expect(match).to.equal(false);
   });
 
