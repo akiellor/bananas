@@ -6,268 +6,206 @@ chai.use(chaiImmutable);
 var expect = chai.expect;
 
 describe('Property Constraints', function() {
+  var expectations = [
+    {
+      constraints: [
+        {
+          hasProperty: 'mandatoryProperty'
+        }
+      ],
+      states: [
+        {
+          state: {
+            mandatoryProperty: 'someVal',
+            collateralProperty: ''
+          },
+          result: true
+        },
+        {
+          state: {},
+          result: false
+        },
+        {
+          state: {
+            mandatoryProperty: null
+          },
+          result: false
+        }
+      ]
+    },
+    {
+      constraints: [
+        {
+          hasNoProperty: 'prop'
+        }
+      ],
+      states: [
+        {
+          state: {
+            prop: 'value'
+          },
+          result: false
+        }
+      ]
+    },
+    {
+      constraints: [{
+        hasProperty: 'mandatoryProperty'
+      }, {
+        hasProperty: 'otherProperty'
+      }],
+      states: [
+        {state: {}, result: false},
+        {
+          state: {
+            'mandatoryProperty': 'someVal',
+            'otherProperty': 'otherVal'
+          },
+          result: true
+        },
+        {
+          state: {
+            'mandatoryProperty': 'someVal'
+          },
+          result: false
+        }
+      ]
+    },
+    {
+      constraints: [{
+        hasProperty: 'mandatoryProperty',
+        withValue: 'strike'
+      }],
+      states: [
+        {
+          state: {
+            'mandatoryProperty': 'strike'
+          },
+          result: true
+        }
+      ]
+    },
+    {
+      constraints: [{
+        hasProperty: 'mandatoryProperty',
+        withCardinality: '=3'
+      }],
+      states: [
+        {
+          state: {
+            'mandatoryProperty': [1, 2, 3]
+          },
+          result: true
+        },
+        {
+          state: {},
+          result: false
+        }
+      ]
+    },
+    {
+      constraints: [{
+        hasProperty: 'mandatoryProperty',
+        withCardinality: '<3'
+      }],
+      states: [
+        {
+          state: {
+            'mandatoryProperty': [1, 2, 3]
+          },
+          result: false
+        }
+      ]
+    },
+    {
+      constraints: [{
+        hasProperty: 'mandatoryProperty',
+        withSome: ['complete']
+      }],
+      states: [
+        {
+          state: {
+            'mandatoryProperty': ['complete', 'done', 'vanity']
+          },
+          result: true
+        },
+        {
+          state: {
+            'mandatoryProperty': 'foo'
+          },
+          result: false
+        }
+      ]
+    },
+    {
+      constraints: [{
+        hasProperty: 'mandatoryProperty',
+        withSome: function(value) {
+          return value.get('status') === 'active';
+        }
+      }],
+      states: [
+        {
+          state: {
+            'mandatoryProperty': [{
+              status: 'active'
+            }]
+          },
+          result: true
+        }
+      ]
+    },
+    {
+      constraints: [{
+        hasProperty: 'mandatoryProperty',
+        withAll: ['complete', 'done']
+      }],
+      states: [
+        {
+          state: {
+            'mandatoryProperty': ['complete', 'done', 'vanity']
+          },
+          result: true
+        },
+        {
+          state: {
+            'mandatoryProperty': ['complete', 'vanity']
+          },
+          result: false
+        }
+      ]
+    },
+    {
+      constraints: [{
+        hasProperty: 'mandatoryProperty',
+        withValueFrom: ['complete', 'active']
+      }],
+      states: [
+        {
+          state: {
+            'mandatoryProperty': ['complete', 'active']
+          },
+          result: true
+        },
+        {
+          state: {
+            'mandatoryProperty': ['complete', 'active', 'extra']
+          },
+          result: false
+        }
+      ]
+    }
+  ];
 
+  expectations.forEach(function(expectation) {
+    describe(JSON.stringify(expectation.constraints), function() {
+      expectation.states.forEach(function(state) {
+        it('should be ' + state.result + ' for ' + JSON.stringify(state.state), function() {
+          var predicate = propertyConstraints(Immutable.fromJS(expectation.constraints));
 
-  it('Should verify hasProperty restrictions', function() {
-
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': 'someVal',
-      collateralProperty: ''
+          expect(predicate(Immutable.fromJS(state.state))).to.equal(state.result);
+        });
+      });
     });
-    var constraint = [{
-      hasProperty: 'mandatoryProperty'
-    }];
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(true);
-
   });
-
-
-  it('Should verify hasNoProperty restrictions', function() {
-
-    var candidateState = Immutable.Map({
-      prop: 'value'
-    });
-    var constraint = [{
-      hasNoProperty: 'prop'
-    }];
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(false);
-
-  });
-
-  it('Should fail hasProperty restrictions', function() {
-
-    //When there is no property
-    var candidateState = Immutable.Map({
-    });
-    var constraint = [{
-      hasProperty: 'mandatoryProperty'
-    }];
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(false);
-
-  });
-
-  it('Should fail hasProperty restrictions when value is not set', function() {
-
-    //when the property is not set
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': undefined
-    });
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty'
-    }];
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(false);
-  });
-
-  it('Should verify multiple hasProperty restrictions', function() {
-
-    //When there is no property
-    var candidateState = Immutable.Map({
-    });
-    var constraint = [{
-      hasProperty: 'mandatoryProperty'
-    }, {
-      hasProperty: 'otherProperty'
-    }];
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(false);
-
-    //when the property is not set
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': 'someVal',
-      'otherProperty': 'otherVal'
-    });
-    match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(true);
-  });
-
-
-  it('Should fail  multiple hasProperty restrictions', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty'
-    }, {
-      hasProperty: 'otherProperty'
-    }];
-
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': 'someVal'
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(false);
-  });
-
-
-  it('Should verify hasProperty restrictions with Value', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty',
-      withValue: 'strike'
-    }];
-
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': 'strike'
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(true);
-  });
-
-
-  it('Should verify hasProperty restrictions with cardinality', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty',
-      withCardinality: '=3'
-    }];
-
-    var candidateState = Immutable.fromJS({
-      'mandatoryProperty': [1, 2, 3]
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(true);
-  });
-
-
-  it('Should fail hasProperty restrictions with cardinality', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty',
-      withCardinality: '<3'
-    }];
-
-    var candidateState = Immutable.fromJS({
-      'mandatoryProperty': [1, 2, 3]
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(false);
-  });
-
-  it('Should handle undefined with cardinality', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty',
-      withCardinality: '=3'
-    }];
-
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': undefined
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(false);
-  });
-
-
-
-  it('Should verify hasProperty restrictions with withSome', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty',
-      withSome: ['complete']
-    }];
-
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': ['complete', 'done', 'vanity']
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(true);
-  });
-
-  it('Should verify hasProperty restrictions with withSome function', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty',
-      withSome: function(value) {
-        return value.status === 'active';
-      }
-    }];
-
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': [{
-        status: 'active'
-      }]
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(true);
-  });
-
-
-  it('Should fail hasProperty restrictions with withSome', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty',
-      withSome: ['incomplete']
-    }];
-
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': ['complete', 'done', 'vanity']
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(false);
-  });
-
-
-  it('Should verify hasProperty restrictions with withAll', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty',
-      withAll: ['complete', 'done']
-    }];
-
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': ['complete', 'done', 'vanity']
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(true);
-  });
-
-  it('Should fail hasProperty restrictions with withAll', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty',
-      withAll: ['complete', 'active']
-    }];
-
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': ['complete', 'done', 'vanity']
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(false);
-  });
-
-
-  it('Should verify hasProperty restrictions with withValueFrom', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty',
-      withValueFrom: ['complete', 'active']
-    }];
-
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': ['complete', 'active']
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(true);
-  });
-
-
-
-  it('Should fail hasProperty restrictions with withValueFrom', function() {
-
-    var constraint = [{
-      hasProperty: 'mandatoryProperty',
-      withValueFrom: ['complete', 'active']
-    }];
-
-    var candidateState = Immutable.Map({
-      'mandatoryProperty': ['complete', 'active', 'extra']
-    });
-    var match = propertyConstraints(Immutable.fromJS(constraint), candidateState);
-    expect(match).to.equal(false);
-  });
-
 });
-
