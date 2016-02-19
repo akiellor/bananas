@@ -201,7 +201,7 @@ describe('Property Constraints', function() {
     describe(JSON.stringify(expectation.constraints), function() {
       expectation.states.forEach(function(state) {
         it('should be ' + state.result + ' for ' + JSON.stringify(state.state), function() {
-          var predicate = propertyConstraints(Immutable.fromJS(expectation.constraints));
+          var predicate = propertyConstraints(expectation.constraints);
 
           expect(predicate(Immutable.fromJS(state.state))).to.equal(state.result);
         });

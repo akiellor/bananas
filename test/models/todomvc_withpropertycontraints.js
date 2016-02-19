@@ -1,3 +1,4 @@
+var constraints = require('../../lib/property_constraints');
 var webdriver = require('selenium-webdriver');
 var By = webdriver.By;
 var until = webdriver.until;
@@ -9,7 +10,6 @@ var hasSomeTodos = function() {
     withCardinality: '>0'
   };
 };
-
 
 var hasSomeTodosLessThan = function(num) {
   return {
@@ -31,14 +31,12 @@ var hasFilterOfNotType = function(filterType) {
   };
 };
 
-
 var hasFilterOfType = function(filterType) {
   return {
     hasProperty: 'filter',
     withValue: filterType
   };
 };
-
 
 function active(todos) {
   return todos.filter(function(todo) {
@@ -52,13 +50,10 @@ function completed(todos) {
   });
 }
 
-
 module.exports.transitions = [
   {
     name: 'select all filter',
-    requires: {
-      constraint: [hasFilterOfNotType('all'), hasSomeTodos()]
-    },
+    requires: constraints([hasFilterOfNotType('all'), hasSomeTodos()]),
     provides: {
       filter: 'all'
     },
@@ -70,9 +65,7 @@ module.exports.transitions = [
   },
   {
     name: 'select active filter',
-    requires: {
-      constraint: [hasFilterOfNotType('active'), hasSomeTodos()]
-    },
+    requires: constraints([hasFilterOfNotType('active'), hasSomeTodos()]),
     provides: {
       filter: 'active'
     },
@@ -84,9 +77,7 @@ module.exports.transitions = [
   },
   {
     name: 'select completed filter',
-    requires: {
-      constraint: [hasFilterOfNotType('completed'), hasSomeTodos()]
-    },
+    requires: constraints([hasFilterOfNotType('completed'), hasSomeTodos()]),
     provides: {
       filter: 'completed'
     },
@@ -98,9 +89,7 @@ module.exports.transitions = [
   },
   {
     name: 'init todos',
-    requires: {
-      constraint: [hasNoTodos()]
-    },
+    requires: constraints([hasNoTodos()]),
     provides: function(model) {
       model.filter = 'all';
       model.todos = [];
@@ -110,9 +99,7 @@ module.exports.transitions = [
   },
   {
     name: 'add todo',
-    requires: {
-      constraint: [hasSomeTodosLessThan(3)]
-    },
+    requires: constraints([hasSomeTodosLessThan(3)]),
     provides: function(model) {
       model.todos.push({
         title: '' + model.todos.length,
@@ -132,15 +119,13 @@ module.exports.transitions = [
   },
   {
     name: 'complete todo',
-    requires: {
-      constraint: [{
-        hasProperty: 'todos',
-        withCardinality: '>0',
-        withSome: function(value) {
-          return value.state === 'active';
-        }
-      }]
-    },
+    requires: constraints([{
+      hasProperty: 'todos',
+      withCardinality: '>0',
+      withSome: function(value) {
+        return value.state === 'active';
+      }
+    }]),
     provides: function(model) {
       var todo = model.todos[0];
       todo.state = 'completed';
@@ -153,9 +138,7 @@ module.exports.transitions = [
   },
   {
     name: 'delete todo from all',
-    requires: {
-      constraint: [hasSomeTodos(), hasFilterOfType('all')]
-    },
+    requires: constraints([hasSomeTodos(), hasFilterOfType('all')]),
     provides: function(model) {
       model.todos = model.todos.slice(1);
       return model;
@@ -171,17 +154,16 @@ module.exports.transitions = [
   },
   {
     name: 'clear completed',
-    requires: {
-      constraint: [{
+    requires: constraints([
+      {
         hasProperty: 'todos',
         withCardinality: '>0',
         withSome: function(value) {
           return value.state === 'completed';
         }
       },
-        hasFilterOfType('all')
-      ]
-    },
+      hasFilterOfType('all')
+    ]),
     provides: function(model) {
       model.todos = active(model.todos);
       return model;
