@@ -168,6 +168,23 @@ function getTexts(driver, selector) {
     });
 }
 
+function verifyTodos(driver, expected) {
+  var selector = ".todo-list li";
+  if (expected.length === 0) {
+    driver.findElements(By.css(selector)).then(function(elems) {
+      expect(elems).to.be.empty;
+    });
+  } else {
+    driver.wait(until.elementsLocated(By.css(selector)));
+    getTexts(driver, selector).then(function(actual) {
+      expect(actual.length).to.equal(expected.length);
+      expected.forEach(function(todo) {
+        expect(actual).to.contain(todo.title);
+      });
+    });
+  }
+}
+
 module.exports.verifications = [
   {
     name: 'verify all todos',
@@ -175,13 +192,7 @@ module.exports.verifications = [
       return state.todos && state.filter === 'all';
     },
     apply: function(driver, state) {
-      getTexts(driver, ".todo-list li").then(function(texts) {
-        var todos = state.todos;
-        expect(texts.length).to.equal(todos.length);
-        todos.forEach(function(todo) {
-          expect(texts).to.contain(todo.title);
-        });
-      });
+      verifyTodos(driver, state.todos);
     }
   },
   {
@@ -190,13 +201,7 @@ module.exports.verifications = [
       return state.todos && state.filter === 'active';
     },
     apply: function(driver, state) {
-      getTexts(driver, ".todo-list li").then(function(texts) {
-        var todos = active(state.todos);
-        expect(texts.length).to.equal(todos.length);
-        todos.forEach(function(todo) {
-          expect(texts).to.contain(todo.title);
-        });
-      });
+      verifyTodos(driver, active(state.todos));
     }
   },
   {
@@ -205,13 +210,7 @@ module.exports.verifications = [
       return state.todos && state.filter === 'completed';
     },
     apply: function(driver, state) {
-      var todos = completed(state.todos);
-      getTexts(driver, ".todo-list li.completed").then(function(texts) {
-        expect(texts.length).to.equal(todos.length);
-        todos.forEach(function(todo) {
-          expect(texts).to.contain(todo.title);
-        });
-      });
+      verifyTodos(driver, completed(state.todos));
     }
   },
   {
@@ -248,5 +247,3 @@ module.exports.verifications = [
     }
   }
 ];
-
-
