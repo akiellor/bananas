@@ -69,26 +69,26 @@ function lt(value) {
   }
 }
 
+function filterWith(pred) {
+  return function(list) {
+    return list.filter(pred);
+  };
+}
+
 var hasSufficientTodosForFilters = sequence(get('todos'), size, gt(1));
 
-function active(todos) {
-  return todos.filter(sequence(get('state'), eq('active')));
-}
-
-function completed(todos) {
-  return todos.filter(sequence(get('state'), eq('completed')));
-}
-
+var active = filterWith(sequence(get('state'), eq('active')));
+var completed = filterWith(sequence(get('state'), eq('completed')));
 var hasTodos = and(hasProperty('todos'), sequence(get('todos'), not(empty)));
 var hasCompletedTodos = and(hasTodos, sequence(get('todos'), completed, not(empty)));
 var firstTodoActive = and(hasTodos, sequence(get('todos', 0, 'state'), eq('active')));
 
-function hasFilter(pred) {
+function hasTodoFilter(pred) {
   return sequence(get('filter'), pred);
 }
-var hasActiveFilter = hasFilter(eq('active'));
-var hasCompletedFilter = hasFilter(eq('completed'));
-var hasAllFilter = hasFilter(eq('all'));
+var hasActiveFilter = hasTodoFilter(eq('active'));
+var hasCompletedFilter = hasTodoFilter(eq('completed'));
+var hasAllFilter = hasTodoFilter(eq('all'));
 
 function wait(driver) {
   var foo = false;
