@@ -13,6 +13,7 @@
     "chai-immutable": "^1.5.3",
     "chai-spies": "^0.7.0",
     "documentation": "^3.0.4",
+    "electron-prebuilt": "^0.36.8",
     "finalhandler": "^0.4.1",
     "mocha": "^2.2.5",
     "selenium-webdriver": "^2.48.2",
