@@ -100,6 +100,16 @@ function wait(driver) {
   }));
 }
 
+var conditions = {
+  empty: function(selector) {
+    return new webdriver.until.Condition('for ' + selector + ' to be empty', function(driver) {
+      return driver.findElements(selector).then(function(elems) {
+        return elems.length === 0;
+      });
+    });
+  }
+};
+
 module.exports.transitions = [
   {
     name: 'select all filter',
@@ -221,9 +231,7 @@ function getTexts(driver, selector) {
 function verifyTodos(driver, expected) {
   var selector = ".todo-list li";
   if (expected.length === 0) {
-    driver.findElements(By.css(selector)).then(function(elems) {
-      expect(elems).to.be.empty;
-    });
+    driver.wait(conditions.empty(By.css(selector)));
   } else {
     driver.wait(until.elementsLocated(By.css(selector)));
     getTexts(driver, selector).then(function(actual) {
