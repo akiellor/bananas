@@ -20,6 +20,9 @@
     "serve-static": "^1.10.2"
   },
   "dependencies": {
+    "d3": "^3.5.16",
+    "dagre-d3": "^0.4.17",
+    "graphlib-dot": "^0.6.2",
     "graphviz": "0.0.8",
     "immutable": "^3.7.5",
     "random-js": "^1.0.8",
