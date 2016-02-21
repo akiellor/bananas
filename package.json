@@ -4,7 +4,8 @@
   "scripts": {
     "test": "mocha test/**/*_spec.js",
     "docs": "documentation -f html -o docs/ ./lib/test_plan.js ./lib/strategies/quick.js",
-    "build": "browserify -s bananas lib/scenario_builder.js -o bananas.js"
+    "build": "browserify -s bananas lib/scenario_builder.js -o bananas.js",
+    "ui": "electron electron-ui"
   },
   "license": "MIT",
   "devDependencies": {
