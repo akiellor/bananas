@@ -2,103 +2,42 @@ var webdriver = require('selenium-webdriver');
 var By = webdriver.By;
 var until = webdriver.until;
 var expect = require('chai').expect;
+var dsl = require('../../lib/property_constraints');
 
-function hasProperty(name) {
-  return function(state) {
-    return state.hasOwnProperty(name);
-  }
-}
 
-function not(fn) {
-  return function(state) {
-    return !fn(state);
-  }
-}
-
-function and() {
-  var fns = Array.prototype.slice.call(arguments);
-  return function(state) {
-    return fns.reduce(function(memo, fn) {
-      return memo && fn(state);
-    }, true);
-  }
-}
-
-function reduce(fn) {
-  return function() {
-    var args = Array.prototype.slice.call(arguments);
-    return function(state) {
-      return args.reduce(fn, state);
-    }
-  }
-}
-
-var sequence = reduce(function(memo, fn) {
-  return fn(memo);
+var nullState = dsl(function() {
+  return this.constraint(Object.keys, this.get('length'), this.eq(0));;
 });
 
-var get = reduce(function(memo, attr) {
-  return memo && memo[attr];
+
+var hasType = function(type) {
+  return dsl(function() {
+    return this.constraint(this.get('todos'), this.withSome([type]));
+  });
+};
+
+
+var hasFilter = function(type) {
+  return dsl(function() {
+    return this.constraint(this.get('filter'), this.eq(type));
+  });
+};
+
+
+var hasTodos = dsl(function() {
+  return this.constraint(this.get('todos'), this.not(this.isEmpty));
 });
 
-var size = get('length');
 
-var nullState = sequence(Object.keys, size, eq(0));
+var active = dsl(function() {
+  return this.constraint(this.get('state'), this.eq('active'));
+});
+var hasCompletedTodos = hasType('completed');
+var hasActiveTodos = hasType('active');
 
-var empty = sequence(size, eq(0));
-
-var hasSize = function(pred) {
-  return sequence(size, pred);
-}
-
-function eq(value) {
-  return function(other) {
-    return other === value;
-  }
-}
-
-function gt(value) {
-  return function(other) {
-    return other > value;
-  }
-}
-
-function lt(value) {
-  return function(other) {
-    return other < value;
-  }
-}
-
-function filterWith(pred) {
-  return function(list) {
-    return list.filter(pred);
-  };
-}
-
-var hasSufficientTodosForFilters = sequence(get('todos'), size, gt(1));
-
-var active = filterWith(sequence(get('state'), eq('active')));
-var completed = filterWith(sequence(get('state'), eq('completed')));
-var hasTodos = and(hasProperty('todos'), sequence(get('todos'), not(empty)));
-var hasCompletedTodos = and(hasTodos, sequence(get('todos'), completed, not(empty)));
-var firstTodoActive = and(hasTodos, sequence(get('todos', 0, 'state'), eq('active')));
-
-function hasTodoFilter(pred) {
-  return sequence(get('filter'), pred);
-}
-var hasActiveFilter = hasTodoFilter(eq('active'));
-var hasCompletedFilter = hasTodoFilter(eq('completed'));
-var hasAllFilter = hasTodoFilter(eq('all'));
-
-function wait(driver) {
-  var foo = false;
-  setTimeout(function() {
-    foo = true;
-  }, 10000000);
-  driver.wait(new webdriver.until.Condition('', function() {
-    return foo;
-  }));
-}
+var hasActiveFilter = hasFilter('active');
+var hasCompletedFilter = hasFilter('completed');
+var hasAllFilter = hasFilter('all');
 
 var conditions = {
   empty: function(selector) {
@@ -113,8 +52,12 @@ var conditions = {
 module.exports.transitions = [
   {
     name: 'select all filter',
-    requires: and(hasSufficientTodosForFilters, not(hasAllFilter)),
-    provides: {filter: 'all'},
+    requires: dsl(function() {
+      return this.not(hasAllFilter);
+    }),
+    provides: {
+      filter: 'all'
+    },
     apply: function(driver) {
       driver
         .findElement(By.linkText('All'))
@@ -123,8 +66,12 @@ module.exports.transitions = [
   },
   {
     name: 'select active filter',
-    requires: and(hasSufficientTodosForFilters, not(hasActiveFilter)),
-    provides: {filter: 'active'},
+    requires: dsl(function() {
+      return this.not(hasActiveFilter);
+    }),
+    provides: {
+      filter: 'active'
+    },
     apply: function(driver) {
       driver
         .findElement(By.linkText('Active'))
@@ -133,8 +80,12 @@ module.exports.transitions = [
   },
   {
     name: 'select completed filter',
-    requires: and(hasSufficientTodosForFilters, not(hasCompletedFilter)),
-    provides: {filter: 'completed'},
+    requires: dsl(function() {
+      return this.not(hasCompletedFilter);
+    }),
+    provides: {
+      filter: 'completed'
+    },
     apply: function(driver) {
       driver
         .findElement(By.linkText('Completed'))
@@ -153,11 +104,14 @@ module.exports.transitions = [
   },
   {
     name: 'add todo',
-    requires: and(
-      hasProperty('todos'),
-      sequence(get('todos'), size, lt(2)),
-      sequence(get('todos', 0, 'title'), not(eq('1')))
-    ),
+    requires: dsl(function() {
+      return this.and(
+        this.constraint(this.get('todos'),
+          this.get('length'),
+          this.lt(2)),
+        this.constraint(this.getIn(['todos', '0', 'title']),
+          this.not(this.eq('1'))));
+    }),
     provides: function(state) {
       state.todos.push({
         title: '' + state.todos.length,
@@ -176,7 +130,12 @@ module.exports.transitions = [
   },
   {
     name: 'complete todo',
-    requires: and(firstTodoActive, not(hasCompletedFilter)),
+    requires: dsl(function() {
+      return this.and(
+        hasActiveTodos,
+        this.not(hasCompletedFilter)
+      );
+    }),
     provides: function(state) {
       var todo = state.todos[0];
       todo.state = 'completed';
@@ -189,7 +148,12 @@ module.exports.transitions = [
   },
   {
     name: 'delete todo from all',
-    requires: and(hasTodos, hasAllFilter),
+    requires: dsl(function() {
+      return this.and(
+        hasTodos,
+        hasAllFilter
+      );
+    }),
     provides: function(state) {
       state.todos = state.todos.slice(1);
       return state;
@@ -205,7 +169,12 @@ module.exports.transitions = [
   },
   {
     name: 'clear completed',
-    requires: and(hasCompletedTodos, hasAllFilter),
+    requires: dsl(function() {
+      return this.and(
+        hasCompletedTodos,
+        hasAllFilter
+      );
+    }),
     provides: function(state) {
       state.todos = active(state.todos);
       return state;
@@ -243,53 +212,55 @@ function verifyTodos(driver, expected) {
   }
 }
 
-module.exports.verifications = [
-  {
-    name: 'verify all todos',
-    requires: and(hasTodos, hasAllFilter),
-    apply: function(driver, state) {
-      verifyTodos(driver, state.todos);
+module.exports.verifications = dsl(function() {
+  return [
+    {
+      name: 'verify all todos',
+      requires: this.and(hasTodos, hasAllFilter),
+      apply: function(driver, state) {
+        verifyTodos(driver, state.todos);
+      }
+    },
+    {
+      name: 'verify active todos',
+      requires: this.and(hasTodos, hasActiveFilter),
+      apply: function(driver, state) {
+        verifyTodos(driver, active(state.todos));
+      }
+    },
+    {
+      name: 'verify completed todos',
+      requires: this.and(hasTodos, hasCompletedFilter),
+      apply: function(driver, state) {
+        verifyTodos(driver, completed(state.todos));
+      }
+    },
+    {
+      name: 'verify todos remaining',
+      requires: this.constraint(this.get('todos'), active, this.getSize, this.eq(1)),
+      apply: function(driver, state) {
+        driver.findElement(By.css('.todo-count')).getText().then(function(text) {
+          expect(text).to.equal('1 item left');
+        });
+      }
+    },
+    {
+      name: 'verify multiple todos remaining',
+      requires: this.and(hasTodos, this.constraint(this.get('todos'), active, this.get('length'), this.gt(1))),
+      apply: function(driver, state) {
+        driver.findElement(By.css('.todo-count')).getText().then(function(text) {
+          expect(text).to.equal(state.todos.length + ' items left');
+        });
+      }
+    },
+    {
+      name: 'verify todos remaining when none active',
+      requires: this.and(hasTodos, this.constraint(this.get('todos'), active, this.isEmpty)),
+      apply: function(driver, state) {
+        driver.findElement(By.css('.todo-count')).getText().then(function(text) {
+          expect(text).to.equal('0 items left');
+        });
+      }
     }
-  },
-  {
-    name: 'verify active todos',
-    requires: and(hasTodos, hasActiveFilter),
-    apply: function(driver, state) {
-      verifyTodos(driver, active(state.todos));
-    }
-  },
-  {
-    name: 'verify completed todos',
-    requires: and(hasTodos, hasCompletedFilter),
-    apply: function(driver, state) {
-      verifyTodos(driver, completed(state.todos));
-    }
-  },
-  {
-    name: 'verify todos remaining',
-    requires: sequence(get('todos'), active, hasSize(eq(1))),
-    apply: function(driver, state) {
-      driver.findElement(By.css('.todo-count')).getText().then(function(text) {
-        expect(text).to.equal('1 item left');
-      });
-    }
-  },
-  {
-    name: 'verify multiple todos remaining',
-    requires: and(hasTodos, sequence(get('todos'), active, size, gt(1))),
-    apply: function(driver, state) {
-      driver.findElement(By.css('.todo-count')).getText().then(function(text) {
-        expect(text).to.equal(state.todos.length + ' items left');
-      });
-    }
-  },
-  {
-    name: 'verify todos remaining when none active',
-    requires: and(hasTodos, sequence(get('todos'), active, empty)),
-    apply: function(driver, state) {
-      driver.findElement(By.css('.todo-count')).getText().then(function(text) {
-        expect(text).to.equal('0 items left');
-      });
-    }
-  }
-];
+  ];
+});

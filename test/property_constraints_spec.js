@@ -1,18 +1,19 @@
 var propertyConstraints = require(__dirname + '/../lib/property_constraints');
-var Immutable = require('immutable');
 var chai = require('chai');
-var chaiImmutable = require('chai-immutable');
-chai.use(chaiImmutable);
 var expect = chai.expect;
 
+
+var bindDsl = function(fn) {
+  return propertyConstraints(fn);
+};
+
 describe('Property Constraints', function() {
+
   var expectations = [
     {
-      constraints: [
-        {
-          hasProperty: 'mandatoryProperty'
-        }
-      ],
+      constraints: bindDsl(function() {
+        return this.constraint(this.hasProperty('mandatoryProperty'));
+      }),
       states: [
         {
           state: {
@@ -34,11 +35,9 @@ describe('Property Constraints', function() {
       ]
     },
     {
-      constraints: [
-        {
-          hasNoProperty: 'prop'
-        }
-      ],
+      constraints: bindDsl(function() {
+        return this.constraint(this.not(this.hasProperty('prop')));
+      }),
       states: [
         {
           state: {
@@ -49,13 +48,15 @@ describe('Property Constraints', function() {
       ]
     },
     {
-      constraints: [{
-        hasProperty: 'mandatoryProperty'
-      }, {
-        hasProperty: 'otherProperty'
-      }],
+      constraints: bindDsl(function() {
+        return this.and(this.constraint(this.hasProperty('mandatoryProperty')),
+          this.constraint(this.hasProperty('otherProperty')));
+      }),
       states: [
-        {state: {}, result: false},
+        {
+          state: {},
+          result: false
+        },
         {
           state: {
             'mandatoryProperty': 'someVal',
@@ -72,10 +73,10 @@ describe('Property Constraints', function() {
       ]
     },
     {
-      constraints: [{
-        hasProperty: 'mandatoryProperty',
-        withValue: 'strike'
-      }],
+      constraints: bindDsl(function() {
+        return this.constraint(this.get('mandatoryProperty'),
+          this.eq('strike'));
+      }),
       states: [
         {
           state: {
@@ -86,10 +87,9 @@ describe('Property Constraints', function() {
       ]
     },
     {
-      constraints: [{
-        hasProperty: 'mandatoryProperty',
-        withCardinality: '=3'
-      }],
+      constraints: bindDsl(function() {
+        return this.constraint(this.get('mandatoryProperty'), this.get('length'), this.eq(3));
+      }),
       states: [
         {
           state: {
@@ -104,10 +104,9 @@ describe('Property Constraints', function() {
       ]
     },
     {
-      constraints: [{
-        hasProperty: 'mandatoryProperty',
-        withCardinality: '<3'
-      }],
+      constraints: bindDsl(function() {
+        return this.constraint(this.get('mandatoryProperty'), this.get('length'), this.gt(3));
+      }),
       states: [
         {
           state: {
@@ -118,10 +117,9 @@ describe('Property Constraints', function() {
       ]
     },
     {
-      constraints: [{
-        hasProperty: 'mandatoryProperty',
-        withSome: ['complete']
-      }],
+      constraints: bindDsl(function() {
+        return this.constraint(this.get('mandatoryProperty'), this.withSome(['vanity']));
+      }),
       states: [
         {
           state: {
@@ -138,12 +136,11 @@ describe('Property Constraints', function() {
       ]
     },
     {
-      constraints: [{
-        hasProperty: 'mandatoryProperty',
-        withSome: function(value) {
-          return value.get('status') === 'active';
-        }
-      }],
+      constraints: bindDsl(function() {
+        return this.constraint(this.get('mandatoryProperty'), this.filterWith(function(value) {
+          return value['status'] === 'active';
+        }));
+      }),
       states: [
         {
           state: {
@@ -156,10 +153,9 @@ describe('Property Constraints', function() {
       ]
     },
     {
-      constraints: [{
-        hasProperty: 'mandatoryProperty',
-        withAll: ['complete', 'done']
-      }],
+      constraints: bindDsl(function() {
+        return this.constraint(this.get('mandatoryProperty'), this.withAll(['complete', 'vanity', 'done']));
+      }),
       states: [
         {
           state: {
@@ -174,36 +170,18 @@ describe('Property Constraints', function() {
           result: false
         }
       ]
-    },
-    {
-      constraints: [{
-        hasProperty: 'mandatoryProperty',
-        withValueFrom: ['complete', 'active']
-      }],
-      states: [
-        {
-          state: {
-            'mandatoryProperty': ['complete', 'active']
-          },
-          result: true
-        },
-        {
-          state: {
-            'mandatoryProperty': ['complete', 'active', 'extra']
-          },
-          result: false
-        }
-      ]
     }
   ];
+
+
 
   expectations.forEach(function(expectation) {
     describe(JSON.stringify(expectation.constraints), function() {
       expectation.states.forEach(function(state) {
         it('should be ' + state.result + ' for ' + JSON.stringify(state.state), function() {
-          var predicate = propertyConstraints(expectation.constraints);
+          var predicate = expectation.constraints;
 
-          expect(predicate(Immutable.fromJS(state.state))).to.equal(state.result);
+          expect(predicate(state.state)).to.equal(state.result);
         });
       });
     });
