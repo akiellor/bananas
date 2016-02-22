@@ -10,10 +10,16 @@ html, body{
 body {
   margin: 0;
 }
+#controls {
+  position: absolute;
+  height: 100%;
+  width: 20%;
+  right: 0;
+}
 svg {
   position: absolute;
   height: 100%;
-  width: 100%;
+  width: 80%;
   border: 1px solid #999;
   overflow: hidden;
 }
@@ -50,16 +56,21 @@ svg {
       var graphlibDot = require('graphlib-dot');
       var render = require('dagre-d3').render();
 
+      var appState = Immutable.fromJS({
+        model: model,
+        disabledTransitions: Immutable.Set()
+      });
 
-      function createGraph(model) {
-        var graphDot = dot(Immutable.fromJS(model.transitions));
+      function renderGraph(appState) {
+        var graphDot = dot(appState.getIn(['model', 'transitions']).filter(function(t) {
+          return !appState.get('disabledTransitions').has(t.get('name'));
+        }));
         var g = graphlibDot.read(graphDot);
         if (!g.graph().hasOwnProperty("marginx") &&
         !g.graph().hasOwnProperty("marginy")) {
           g.graph().marginx = 20;
           g.graph().marginy = 20;
         }
-        d3.select("body").append("svg").append("g");
         var svg = d3.select("svg"),
         inner = d3.select("svg g"),
         zoom = d3.behavior.zoom().on("zoom", function() {
@@ -68,10 +79,43 @@ svg {
           });
           svg.call(zoom);
         d3.select("svg g").call(render, g);
-
       }
 
-      createGraph(model);
+      function check(event, name) {
+        var value = event.target.checked;
+        if (value) {
+          appState = appState.update('disabledTransitions', function(set) {
+            return set.remove(name);
+          });
+        } else {
+          appState = appState.update('disabledTransitions', function(set) {
+            return set.add(name);
+          });
+        }
+      }
+
+      function renderControls(appState) {
+        var controls = document.getElementById('controls');
+        var html = appState.get('model').get('transitions').map(function(t) {
+          var checked = !appState.get('disabledTransitions').has(t.get('name')) ? 'checked="checked"' : '';
+          return `<div><input type="checkbox" ${checked} onchange="return check(event, '${t.get('name')}')">${t.get('name')}</div>`;
+        }).join('\n');
+        controls.innerHTML = html;
+      }
+
+      var oldState;
+      function tick() {
+        if (!Immutable.is(oldState, appState)) {
+          console.log(appState.toJS());
+          renderGraph(appState);
+          renderControls(appState);
+          oldState = appState;
+        }
+        window.requestAnimationFrame(tick);
+      }
+      window.requestAnimationFrame(tick);
     </script>
+    <svg><g></g></svg>
+    <div id="controls"></div>
     </body>
   </html>
