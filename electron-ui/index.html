@@ -47,6 +47,9 @@ svg {
 </style>
   </head>
   <body>
+    <svg><g></g></svg>
+    <div id="controls"></div>
+
     <script>
       var model = require('../test/models/todomvc');
       var states = require('../lib/states');
@@ -115,7 +118,5 @@ svg {
       }
       window.requestAnimationFrame(tick);
     </script>
-    <svg><g></g></svg>
-    <div id="controls"></div>
     </body>
   </html>
